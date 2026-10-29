@@ -13,6 +13,21 @@ public final class DocumentConstant {
         "<table><thead><tr><th>参数</th><th>说明</th><th>类型</th><th>可选值</th><th>默认值</th></tr></thead><tbody><tr><td>table-data</td><td>`{ result: any[], count: number }` 信封</td><td>object</td><td></td><td>`{ result: [], count: 0 }`</td></tr><tr><td>auto-load</td><td>挂载即发起首次 query-change（默认 false，对齐旧版由业务外层 onMounted 自行调用；开启后挂载自动触发）</td><td>boolean</td><td></td><td>false</td></tr><tr><td>input</td><td>初始查询参数（take/draw/order/conditionItems）</td><td>object</td><td></td><td>{}</td></tr><tr><td>pagination</td><td>分页配置（currentSize/pageSizes/layout）</td><td>object</td><td></td><td>—</td></tr></tbody></table>" +
         "<table><thead><tr><th>参数</th><th>说明</th><th>类型</th><th>可选值</th><th>默认值</th></tr></thead><tbody><tr><td>row-key</td><td>行 key 字段</td><td>string</td><td></td><td>id</td></tr><tr><td>[tree-config](#treeconfig)</td><td>树配置（懒加载/层级连线/手风琴等，[子项详见下方](#treeconfig)）</td><td>object</td><td></td><td>showLine:true, square 图标</td></tr><tr><td>checkbox-config</td><td>勾选配置（checkStrictly/checkRowKeys/reserve）</td><td>object</td><td></td><td>—</td></tr><tr><td>menu-config</td><td>右键菜单配置（传则完全自定义，不传用内置）</td><td>object</td><td></td><td>内置运维菜单</td></tr><tr><td>show-menus</td><td>是否启用内置懒加载运维右键菜单</td><td>boolean</td><td></td><td>true</td></tr><tr><td>footer-data</td><td>表尾合计数据</td><td>array</td><td></td><td>[]</td></tr><tr><td>summary-method</td><td>表尾合计方法（EP 签名 `columns[].property`）</td><td>function</td><td></td><td>—</td></tr><tr><td>default-expand-all</td><td>EP 顶层 attr：全展开（归并 tree-config.expandAll）</td><td>boolean</td><td></td><td>false</td></tr><tr><td>expand-row-keys</td><td>EP 顶层 attr：初始展开行 keys（归并 tree-config.expandRowKeys）</td><td>array</td><td></td><td>—</td></tr></tbody></table>";
 
+    /** b-table-only（b-table-kit 壳组件，文档同 kit） */
+    public static String btableonly = btablekit;
+
+    /** b-table-async（b-table-kit 壳组件，文档同 kit） */
+    public static String btableasync = btablekit;
+
+    /** b-table-report（b-table-kit 壳组件，文档同 kit） */
+    public static String btablereport = btablekit;
+
+    /** b-tree-table（b-table-kit 壳组件，文档同 kit） */
+    public static String btreetable = btablekit;
+
+    /** b-table-edit（b-table-kit 壳组件，文档同 kit） */
+    public static String btableedit = btablekit;
+
     /** b-list-kit 列表套件 */
     public static String blistkit = "https://beaver-ui.yearrow.com/component/list-kit" + "<br>" +
         "<table><thead><tr><th>参数</th><th>说明</th><th>类型</th><th>可选值</th><th>默认值</th></tr></thead><tbody><tr><td>list-data</td><td>列表数据（数组或信封，见各组件）</td><td>array / object</td><td></td><td>[]</td></tr><tr><td>loading</td><td>加载中</td><td>boolean</td><td></td><td>false</td></tr><tr><td>height</td><td>容器高度</td><td>string</td><td></td><td>100%</td></tr><tr><td>direction</td><td>排列方向</td><td>'horizontal' / 'vertical'</td><td></td><td>horizontal</td></tr><tr><td>wrap</td><td>自动换行</td><td>boolean</td><td></td><td>true</td></tr><tr><td>fill</td><td>撑满整行</td><td>boolean</td><td></td><td>false</td></tr><tr><td>space-size</td><td>间距</td><td>number / string / [number, number]</td><td></td><td>组件各异</td></tr><tr><td>list-item-props</td><td>卡片属性（width/height/border/shadow/background/paddingSize）</td><td>object</td><td></td><td>{}</td></tr><tr><td>alignment</td><td>对齐方式</td><td>string</td><td></td><td>组件各异</td></tr><tr><td>fill-ratio</td><td>fill 模式占比</td><td>number</td><td></td><td>100</td></tr><tr><td>space-style</td><td>间距容器样式</td><td>string / object</td><td></td><td>'width: 100%'</td></tr></tbody></table>" +
@@ -20,6 +35,15 @@ public final class DocumentConstant {
         "<table><thead><tr><th>事件名</th><th>说明</th><th>回调参数</th></tr></thead><tbody><tr><td>事件</td><td>组件</td><td>说明</td></tr><tr><td>reload</td><td>Async</td><td>翻页/换页大小触发（兼容旧版签名）</td></tr><tr><td>pageChange</td><td>Report</td><td>`(page, pageSize)`</td></tr></tbody></table>" +
         "<table><thead><tr><th>参数</th><th>说明</th><th>类型</th><th>可选值</th><th>默认值</th></tr></thead><tbody><tr><td>方法</td><td>组件</td><td>说明</td><td></td><td></td></tr><tr><td>getScrollRef</td><td>全部</td><td>滚动条实例</td><td></td><td></td></tr><tr><td>getPaginationParams(isReset, pageNo)</td><td>Async</td><td>skip/take 协议参数（对齐旧版）</td><td></td><td></td></tr><tr><td>setCurrentPage(pageNo)</td><td>Async/Report</td><td>程序切页</td><td></td><td></td></tr></tbody></table>" +
         "<table><thead><tr><th>插槽名</th><th>说明</th></tr></thead><tbody><tr><td>插槽</td><td>参数</td></tr><tr><td>item</td><td>`{ row, index }`</td></tr><tr><td>pagination</td><td>`{ total, page, pageSize }`</td></tr><tr><td>empty</td><td>—</td></tr></tbody></table>";
+
+    /** b-list-only（b-list-kit 壳组件，文档同 kit） */
+    public static String blistonly = blistkit;
+
+    /** b-list-async（b-list-kit 壳组件，文档同 kit） */
+    public static String blistasync = blistkit;
+
+    /** b-list-report（b-list-kit 壳组件，文档同 kit） */
+    public static String blistreport = blistkit;
 
     /** b-list 列表 */
     public static String blist = "https://beaver-ui.yearrow.com/component/list" + "<br>" +

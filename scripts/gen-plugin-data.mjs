@@ -108,6 +108,19 @@ const javaEsc = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
 // HTML 转义
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
+// ============ 套件壳组件标签（独立注册但共用 kit 文档的属性集） ============
+// [壳标签, 所属kit标签, 追加特有属性候选]
+const SHELL_TAGS = [
+  ['b-table-only', 'b-table-kit', { data: ['rows'] }],
+  ['b-table-async', 'b-table-kit', { 'table-data': ['{ result, count }'], input: ['{ take: 20, draw: 1 }'] }],
+  ['b-table-report', 'b-table-kit', { data: ['rows'] }],
+  ['b-tree-table', 'b-table-kit', { 'tree-config': ['lazy', 'children', 'transform'], 'row-key': ['id'] }],
+  ['b-table-edit', 'b-table-kit', { 'edit-config': ['click', 'dblclick', 'manual'] }],
+  ['b-list-only', 'b-list-kit', { data: ['rows'] }],
+  ['b-list-async', 'b-list-kit', { 'list-data': ['{ result, count }'] }],
+  ['b-list-report', 'b-list-kit', { data: ['rows'] }],
+]
+
 // ============ 生成 ============
 function pickComponents() {
   const files = fs.readdirSync(MD_DIR).filter((f) => f.endsWith('.md') && f !== 'overview.md' && f !== 'border.md' && f !== 'color.md')
@@ -143,7 +156,7 @@ function genTagConstant() {
       if (!attrName || attrName.startsWith('^')) continue
       const cands = propCandidates(row)
       if (cands.length > 0) {
-        mapEntries.push(`        m.put("${attrName}", new String[]{${cands.map((v) => `"${javaEsc(v)}"`).join(', ')}});`)
+        mapEntries.push(`          m.put("${attrName}", new String[]{${cands.map((v) => `"${javaEsc(v)}"`).join(', ')}});`)
       }
     }
     if (mapEntries.length === 0) continue
@@ -153,6 +166,19 @@ function genTagConstant() {
 ${mapEntries.join('\n')}
           TAG_CONSTANT.put("b-${c.name}", m);
         }`)
+    // 套件壳组件：复用 kit 属性集 + 追加特有属性
+    for (const [shell, kit, extra] of SHELL_TAGS) {
+      if (kit !== `b-${c.name}`) continue
+      const extraEntries = Object.entries(extra)
+        .map(([k, vs]) => `          m.put("${k}", new String[]{${vs.map((v) => `"${javaEsc(v)}"`).join(', ')}});`)
+      blocks.push(`        // ${shell}（${kit} 壳组件）
+        {
+          HashMap<String, String[]> m = new HashMap<>();
+${mapEntries.join('\n')}
+${extraEntries.join('\n')}
+          TAG_CONSTANT.put("${shell}", m);
+        }`)
+    }
   }
   return `package com.yearrow.beaverui.xml;
 
@@ -180,6 +206,14 @@ function genDocConstant() {
   for (const c of comps) {
     if (c.tables.length === 0) continue
     const url = `${SITE}/${c.name}`
+    // 壳组件文档：指向 kit 文档页（同一份 API 表即涵盖全部壳组件）
+    const SHELL_DOC_LINKS = {
+      'b-table-only': 'b-table-kit', 'b-table-async': 'b-table-kit',
+      'b-table-report': 'b-table-kit', 'b-tree-table': 'b-table-kit',
+      'b-table-edit': 'b-table-kit',
+      'b-list-only': 'b-list-kit', 'b-list-async': 'b-list-kit',
+      'b-list-report': 'b-list-kit',
+    }
     const groups = new Map()
     for (const row of c.tables) {
       const sec = row.section.replace(/^(.*?)(Attributes|Events|Slots|Exposes|属性|事件|插槽).*$/, '$1$2').trim()
@@ -206,6 +240,12 @@ function genDocConstant() {
     // DocumentProvider 反射按「标签去 - 全小写」匹配 field 名（b-table-only → btableonly）
     const fieldName = ('b' + c.name).replace(/-/g, '')
     fields.push(`    /** b-${c.name} ${c.cnName} */\n    public static String ${fieldName} = "${esc(url)}" + "<br>" +\n        ${parts.map((p) => JSON.stringify(p)).join(' +\n        ')};`)
+    // 壳组件文档字段：直接引用所属 kit 的文档内容（别名）
+    for (const [shell, kit] of Object.entries(SHELL_DOC_LINKS)) {
+      if (kit !== `b-${c.name}`) continue
+      const shellField = shell.replace(/-/g, '')
+      fields.push(`    /** ${shell}（${kit} 壳组件，文档同 kit） */\n    public static String ${shellField} = ${fieldName};`)
+    }
   }
   return `package com.yearrow.beaverui.document;
 
