@@ -116,17 +116,19 @@ public class BeaverAttrAction extends AnAction {
         if (attrs == null) return;
         final String[] values = attrs.get(attrName);
         if (values == null || values.length == 0) return;
+        Project project = editor.getProject();
 
         PopupChooserBuilder<String> builder = (PopupChooserBuilder<String>) JBPopupFactory.getInstance()
                 .createPopupChooserBuilder(Arrays.asList(values))
                 .setTitle("b-" + tagName + " · " + attrName + " 可选值")
-                .setItemChosenCallback((selectedValue) -> insertValue(editor, attribute, selectedValue));
+                .setItemChosenCallback((selectedValue) -> insertValue(project, editor, attribute, selectedValue));
         JBPopup popup = builder.createPopup();
         popup.showInBestPositionFor(editor);
     }
 
-    /** 把选中的值写入属性值引号内（attribute 为 null 时按文本方式定位引号） */
-    private static void insertValue(Editor editor, XmlAttribute attribute, String value) {
+    /** 把选中的值写入属性值引号内（attribute 为 null 时按文本方式定位引号）；
+     *  文档写入必须包在 WriteCommandAction（平台线程模型：EDT 回调内仅 WriteIntentReadAction） */
+    private static void insertValue(Project project, Editor editor, XmlAttribute attribute, String value) {
         Document document = editor.getDocument();
         int caret = editor.getCaretModel().getOffset();
 
@@ -167,7 +169,8 @@ public class BeaverAttrAction extends AnAction {
             }
         }
 
-        document.replaceString(start, end, value);
+        com.intellij.openapi.command.WriteCommandAction.runWriteCommandAction(project,
+                () -> document.replaceString(start, end, value));
         editor.getCaretModel().moveToOffset(start + value.length());
     }
 }
