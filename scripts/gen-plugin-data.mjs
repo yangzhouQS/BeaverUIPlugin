@@ -44,7 +44,9 @@ function parseMd(name, code) {
     if (line.startsWith('### ')) { section = line.replace(/^###\s+/, '').trim(); continue }
     if (line.startsWith('## ')) { section = ''; continue }
     if (/^\|/.test(line)) {
-      const cells = line.split('|').map((c) => c.trim())
+      // md 表格内的转义管道（\| 或 \\|）先占位，避免 split('|') 切碎枚举段
+      const guarded = line.replace(/\\\\\|/g, '\u0002').replace(/\\\|/g, '\u0002')
+      const cells = guarded.split('|').map((c) => c.replace(/\u0002/g, '\\|').trim())
       if (cells[0] === '' ) cells.shift()
       if (cells[cells.length - 1] === '') cells.pop()
       if (cells.every((c) => /^:?-{2,}:?$/.test(c) || c === '')) continue // 分隔行
@@ -52,13 +54,22 @@ function parseMd(name, code) {
         header = cells; continue
       }
       if (header && cells.length >= 3) {
+        // 按表头定位列：可选值列存在则用之；EP 四列表（无可选值列）
+        // 时从类型列的 ^[enum]`...` 反引号段提取候选
+        const hIdx = (h) => header.findIndex((c) => c.includes(h))
+        const valuesIdx = hIdx('可选值') >= 0 ? hIdx('可选值') : -1
+        const typeIdx = hIdx('类型') >= 0 ? hIdx('类型') : -1
+        const defIdx = hIdx('默认值') >= 0 ? hIdx('默认值') : -1
+        const isEvents = /事件名/.test(header[0]) || /事件/.test(header[0])
+        const isSlots = /插槽名/.test(header[0]) || /插槽/.test(header[0])
         tables.push({
           section,
           name: cells[0],
           desc: cells[1] || '',
-          type: cells[2] || '',
-          values: cells[3] && cells[3] !== '—' ? cells[3] : '',
-          def: cells[4] || '',
+          type: typeIdx >= 0 ? cells[typeIdx] || '' : (cells[2] || ''),
+          values: valuesIdx >= 0 ? (cells[valuesIdx] || '') : '',
+          def: defIdx >= 0 ? (cells[defIdx] || '') : '',
+          isEvents, isSlots,
         })
       }
     } else if (line.trim() && !line.startsWith('|')) {
@@ -68,20 +79,27 @@ function parseMd(name, code) {
   return { name, cnName, tables }
 }
 
-// 属性值候选：从 可选值 列拆 + ^[enum]`...` 反引号段解析
-function propCandidates(valuesCell) {
-  if (!valuesCell) return []
-  const enumMatch = valuesCell.match(/`([^`]*)`/)
-  const src = enumMatch ? enumMatch[1] : valuesCell
+// 属性值候选：可选值列直拆；无可选值列时从类型列 ^[enum]`...` 反引号段提取
+function propCandidates(row) {
+  const raw = row.values && row.values !== '—' ? row.values : row.type
+  if (!raw) return []
+  const enumMatch = raw.match(/`([^`]*)`/)
+  const src = enumMatch ? enumMatch[1] : raw
+  // 管道分隔（含转义 \|）统一占位为分隔符，拆分后再还原
+  const cleaned = src
+    .replace(/\\\s*\|/g, '\u0001')
+    .replace(/^\^\[[^\]]*\]/, '')
+  const TYPE_WORDS = new Set(['string', 'number', 'boolean', 'array', 'object', 'function', 'component', 'symbol', 'date', 'any', 'void', 'string[]', 'number[]', 'boolean[]'])
   return [...new Set(
-    src.split(/[|/、,]/)
+    cleaned.split(/[\u0001/、,]/)
       .map((s) => s.trim()
+        .replace(/\u0001/g, '|')
         .replace(/`/g, '')
         .replace(/'/g, '')
         .replace(/\\+/g, ' ')
         .replace(/^\^+/, '')
         .trim())
-      .filter((s) => s && s !== '—' && s !== '*' && !s.includes('^[') && !/[<>（(]/.test(s) && s.length <= 24),
+      .filter((s) => s && s !== '—' && s !== '*' && !s.includes('^[') && !/[<>（(]/.test(s) && !/^\[[a-z]+\]$/i.test(s) && !TYPE_WORDS.has(s) && s.length <= 24),
   )].slice(0, 12)
 }
 
@@ -123,7 +141,7 @@ function genTagConstant() {
       // 链接形式 [name](#xx) 取纯名
       const attrName = row.name.replace(/\[([^\]]+)\].*/, '$1').trim()
       if (!attrName || attrName.startsWith('^')) continue
-      const cands = propCandidates(row.values)
+      const cands = propCandidates(row)
       if (cands.length > 0) {
         mapEntries.push(`        m.put("${attrName}", new String[]{${cands.map((v) => `"${javaEsc(v)}"`).join(', ')}});`)
       }
