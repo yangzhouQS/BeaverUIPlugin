@@ -7,16 +7,17 @@
     <idea-version since-build="223.0"/>
 
     <description><![CDATA[
-        Beaver UI helper for JetBrains IDEs: tag completion, attribute hints,
-        quick documentation (Ctrl+Q) and live templates for the Beaver UI component library.<br>
-        Data snapshot targets beaver-ui 1.0.0.<br>
-        Originally forked from <a href="https://github.com/jiaolong1021/ElementPlugin">ElementPlugin</a>
-        (element-ui plugin, unmaintained), reworked for the Beaver UI component library.
+        Beaver UI 组件库的 JetBrains IDE 开发辅助插件：提供 b-* 标签自动补全、属性名与属性值提示、
+        组件速查文档（Ctrl+Q，链接至组件官网）以及常用代码模板（Live Templates）。<br>
+        内置数据对应 beaver-ui 1.0.0（含 table-kit / list-kit / search 系列等自研组件与高频基础组件）。<br>
+        基于 <a href="https://github.com/jiaolong1021/ElementPlugin">ElementPlugin</a>（element-ui 插件，已停止维护）
+        二次开发重构，感谢原作者。
 ]]></description>
 
     <change-notes><![CDATA[
-      1.0.0: rebrand to Beaver UI; rebuild data for beaver-ui 1.0.0 (b-* tags,
-      attributes, quick docs, live templates); modernize build to intellij-platform-gradle-plugin 2.x.
+      1.0.0：品牌重塑为 Beaver UI；内置 beaver-ui 1.0.0 全量数据（b-* 标签、属性候选、
+      速查文档、Live Templates）；构建链升级至 intellij-platform-gradle-plugin 2.x，
+      兼容 IDEA 2023.1 及以上版本。
     ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
