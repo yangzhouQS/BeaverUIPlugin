@@ -1,51 +1,40 @@
 <idea-plugin>
-    <id>com.shen.plugin.element2023</id>
-    <name>element</name>
-    <version>2.2</version>
-    <vendor url="https://github.com/vacuole1989/ElementPlugin">element</vendor>
+    <id>com.yearrow.beaverui</id>
+    <name>Beaver UI</name>
+    <version>1.0.0</version>
+    <vendor url="https://beaver-ui.yearrow.com">yearrow</vendor>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="173.0"/>
+    <idea-version since-build="223.0"/>
 
     <description><![CDATA[
-       This plug-in is an ElementUI prompt plug-in, which can prompt some labels and attribute values of elementUI.
-        This plugin is modified from <a href="https://plugins.jetbrains.com/plugin/10524-element">element</a>
-        Since the previous plug-in is no longer updated, but it is not compatible with the new idea2023 version, in order to be able to use it normally, some incompatible codes are shielded for the plug-in, so that it will not report an error when it runs in the idea2023 version.
+        Beaver UI helper for JetBrains IDEs: tag completion, attribute hints,
+        quick documentation (Ctrl+Q) and live templates for the Beaver UI component library.<br>
+        Data snapshot targets beaver-ui 1.0.0.<br>
+        Originally forked from <a href="https://github.com/jiaolong1021/ElementPlugin">ElementPlugin</a>
+        (element-ui plugin, unmaintained), reworked for the Beaver UI component library.
 ]]></description>
 
     <change-notes><![CDATA[
-      1. optimize, <br/> 2. add tag special attribute and auto tip,
-      <br/> 3. compatible for idea 2023.1 or later.
-    ]]>
-    </change-notes>
+      1.0.0: rebrand to Beaver UI; rebuild data for beaver-ui 1.0.0 (b-* tags,
+      attributes, quick docs, live templates); modernize build to intellij-platform-gradle-plugin 2.x.
+    ]]></change-notes>
 
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-         on how to target different products -->
-    <!-- uncomment to enable plugin in all products
-    <depends>com.intellij.modules.lang</depends>
-    -->
-    <depends>JavaScript</depends>
     <depends>com.intellij.modules.platform</depends>
+    <depends>JavaScript</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <!-- Add your extensions here -->
-        <fileTypeFactory implementation="com.element.ElementFileTypeFactory" />
+        <fileTypeFactory implementation="com.yearrow.beaverui.ElementFileTypeFactory" />
         <!--<lang.parserDefinition language="element" implementationClass="com.elementent.language.elementParserDefinition"/>-->
 
-        <!-- 代码块提示 -->
-        <defaultLiveTemplatesProvider implementation="com.element.ElementTemplatesProvider"/>
+        <!-- live templates -->
+        <defaultLiveTemplatesProvider implementation="com.yearrow.beaverui.ElementTemplatesProvider"/>
 
-        <!-- 标签文档提示 -->
-        <lang.documentationProvider language="HTML" implementationClass="com.element.document.DocumentProvider" order="first"/>
+        <!-- quick documentation (Ctrl+Q) -->
+        <lang.documentationProvider language="HTML" implementationClass="com.yearrow.beaverui.document.DocumentProvider" order="first"/>
 
-        <!-- 标签自动完成、属性提示 -->
-        <xml.tagNameProvider implementation="com.element.xml.ElementTagNameProvider"/>
-        <xml.elementDescriptorProvider implementation="com.element.xml.ElementTagNameProvider" order="first"/>
-        <xml.attributeDescriptorsProvider implementation="com.element.xml.ElementAttributesProvider" />
-
+        <!-- tag completion / attribute hints -->
+        <xml.tagNameProvider implementation="com.yearrow.beaverui.xml.ElementTagNameProvider"/>
+        <xml.elementDescriptorProvider implementation="com.yearrow.beaverui.xml.ElementTagNameProvider" order="first"/>
+        <xml.attributeDescriptorsProvider implementation="com.yearrow.beaverui.xml.ElementAttributesProvider" />
     </extensions>
-
-    <actions>
-        <!-- Add your actions here -->
-    </actions>
 </idea-plugin>

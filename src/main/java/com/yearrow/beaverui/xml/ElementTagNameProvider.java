@@ -1,4 +1,4 @@
-package com.element.xml;
+package com.yearrow.beaverui.xml;
 
 import com.intellij.codeInsight.completion.XmlTagInsertHandler;
 import com.intellij.codeInsight.lookup.LookupElement;

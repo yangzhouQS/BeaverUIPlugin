@@ -1,35 +1,41 @@
 plugins {
-    id 'org.jetbrains.intellij' version '0.3.1'
+    id 'java'
+    id 'org.jetbrains.intellij.platform' version '2.6.0'
 }
 
-group 'element'
-version '2.2'
-
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'org.jetbrains.intellij'
-
-sourceCompatibility = 1.8
+group 'com.yearrow.beaverui'
+version '1.0.0'
 
 repositories {
     mavenCentral()
-    maven { url 'http://dl.bintray.com/jetbrains/intellij-plugin-service' }
+    intellijPlatform {
+        defaultRepositories()
+    }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    intellijPlatform {
+        // 构建目标：2024.2（产物向下兼容 since-build=223，即 IDEA 2023.1+）
+        intellijIdeaUltimate('2024.2')
+        // Vue/JS 语言支持（原插件依赖 JavaScript 插件；platform 模块为默认依赖无需声明）
+        bundledPlugin 'JavaScript'
+    }
 }
 
-intellij {
-    version 'IU-173.4674.33'
-    /*version 'IU-LATEST-TRUNK-SNAPSHOT'*/
-    pluginName 'element'
-    downloadSources false
-    updateSinceUntilBuild false
-    plugins = ['JavaScriptLanguage']
+java {
+    toolchain {
+        // 本机 Temurin 21 可编译 target 17；若团队机器无 21，Gradle 会自动探测任意 >=17 的 JDK
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
-//指定编译的编码
-tasks.withType(JavaCompile){
-    options.encoding = "UTF-8"
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+// 声明兼容 IDEA 2023.1+（不 patch 成构建目标版本 242）
+tasks.named('patchPluginXml') {
+    sinceBuild = '223'
+    untilBuild = provider { null }
 }

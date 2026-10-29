@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templateSet group="beaver-ui">
+<!-- 自动生成：scripts/gen-plugin-data.mjs；数据快照 beaver-ui 1.0.0 -->
+  <template name="bButton" value="&lt;b-button type=&quot;primary&quot;&gt;$X$&lt;/b-button&gt;" description="beaver-ui Button" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bInput" value="&lt;b-input v-model=&quot;form.$X$&quot; placeholder=&quot;请输入&quot; clearable /&gt;" description="beaver-ui Input" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bSelect" value="&lt;b-select v-model=&quot;form.$X$&quot; placeholder=&quot;请选择&quot; clearable /&gt;" description="beaver-ui Select" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bDatePicker" value="&lt;b-date-picker v-model=&quot;form.$X$&quot; type=&quot;daterange&quot; start-placeholder=&quot;开始时间&quot; end-placeholder=&quot;结束时间&quot; /&gt;" description="beaver-ui DatePicker" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bDialog" value="&lt;b-dialog v-model=&quot;dialogVisible&quot; title=&quot;$X$&quot; width=&quot;600px&quot;&gt;
+  &lt;template #footer&gt;
+    &lt;b-button @click=&quot;dialogVisible = false&quot;&gt;取消&lt;/b-button&gt;
+    &lt;b-button type=&quot;primary&quot; @click=&quot;onConfirm&quot;&gt;确定&lt;/b-button&gt;
+  &lt;/template&gt;
+&lt;/b-dialog&gt;" description="beaver-ui Dialog" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bForm" value="&lt;b-form ref=&quot;formRef&quot; :model=&quot;form&quot; :rules=&quot;rules&quot; label-width=&quot;100px&quot;&gt;
+  &lt;b-form-item label=&quot;$X$&quot; prop=&quot;name&quot;&gt;
+    &lt;b-input v-model=&quot;form.name&quot; /&gt;
+  &lt;/b-form-item&gt;
+&lt;/b-form&gt;" description="beaver-ui Form" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bTableOnly" value="&lt;b-table-only
+  :table-data=&quot;rows&quot;
+  :column-configs=&quot;columns&quot;
+  @reload=&quot;load&quot;
+/&gt;" description="beaver-ui TableOnly" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bTableAsync" value="&lt;b-table-async
+  ref=&quot;tableRef&quot;
+  :table-data=&quot;tableData&quot;
+  :column-configs=&quot;columns&quot;
+  :table-loading=&quot;loading&quot;
+  :input=&quot;{ take: 20, draw: 1 }&quot;
+  @query-change=&quot;handleQueryChange&quot;
+/&gt;" description="beaver-ui TableAsync" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bListAsync" value="&lt;b-list-async
+  :list-data=&quot;listData&quot;
+  item-key=&quot;id&quot;
+  @reload=&quot;load&quot;
+&gt;
+  &lt;template #item=&quot;{ row }&quot;&gt;
+    &lt;b-box&gt;
+      &lt;p&gt;$X$&lt;/p&gt;
+    &lt;/b-box&gt;
+  &lt;/template&gt;
+&lt;/b-list-async&gt;" description="beaver-ui ListAsync" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bSearchSelect" value="&lt;b-search-select
+  v-model=&quot;value&quot;
+  @load=&quot;({ skip, take, keyword }, resolve) =&gt;
+    searchApi({ keyword, skip, take }).then((r) =&gt; resolve(r.result))&quot;
+/&gt;" description="beaver-ui SearchSelect" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bPanel" value="&lt;b-panel title=&quot;$X$&quot;&gt;
+  &lt;template #tool&gt;
+    &lt;b-button type=&quot;primary&quot; link&gt;更多&lt;/b-button&gt;
+  &lt;/template&gt;
+  内容
+&lt;/b-panel&gt;" description="beaver-ui Panel" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bToolBar" value="&lt;b-tool-bar&gt;
+  &lt;template #filter&gt;
+    &lt;b-col :span=&quot;6&quot;&gt;&lt;b-filter-item label=&quot;$X$&quot; label-width=&quot;80&quot;&gt;&lt;b-input /&gt;&lt;/b-filter-item&gt;&lt;/b-col&gt;
+  &lt;/template&gt;
+  &lt;template #tool&gt;
+    &lt;b-button type=&quot;primary&quot; @click=&quot;onSearch&quot;&gt;查询&lt;/b-button&gt;
+  &lt;/template&gt;
+&lt;/b-tool-bar&gt;" description="beaver-ui ToolBar" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bFlexBox" value="&lt;b-flex-box :is-row=&quot;true&quot; :item-num=&quot;2&quot; :item-config=&quot;[{ tag: 'main' }, { tag: 'side', isFixed: true, size: '280px', showDragButton: true }]&quot;&gt;
+  &lt;template #main&gt;$X$&lt;/template&gt;
+  &lt;template #side&gt;侧栏&lt;/template&gt;
+&lt;/b-flex-box&gt;" description="beaver-ui FlexBox" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bDateRange" value="&lt;b-date-range-picker
+  v-model=&quot;range&quot;
+  type=&quot;daterange&quot;
+  :shortcuts=&quot;['month', 'quarter', 'year']&quot;
+  default-shortcut=&quot;month&quot;
+/&gt;" description="beaver-ui DateRange" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bMessage" value="&lt;script setup&gt;
+import { BMessage } from '@cs/beaver-ui'
+const onClick = () =&gt; BMessage.success('$')
+&lt;/script&gt;" description="beaver-ui Message" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="VUE_TEMPLATE_TEXT" value="true"/>
+    </context>
+  </template>
+</templateSet>

@@ -1,4 +1,4 @@
-package com.element;
+package com.yearrow.beaverui;
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer;
 import com.intellij.openapi.fileTypes.FileTypeFactory;

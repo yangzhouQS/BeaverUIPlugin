@@ -1,4 +1,4 @@
-package com.element.document;
+package com.yearrow.beaverui.document;
 
 import com.intellij.lang.documentation.AbstractDocumentationProvider;
 import com.intellij.openapi.util.text.StringUtil;

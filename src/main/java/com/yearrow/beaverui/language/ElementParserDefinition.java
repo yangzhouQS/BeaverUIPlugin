@@ -1,4 +1,4 @@
-package com.element.language;
+package com.yearrow.beaverui.language;
 
 import com.intellij.lang.PsiParser;
 import com.intellij.lang.html.HTMLParserDefinition;

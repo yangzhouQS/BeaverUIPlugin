@@ -1,4 +1,4 @@
-package com.element.xml;
+package com.yearrow.beaverui.xml;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -7,7 +7,7 @@ import com.intellij.psi.xml.XmlElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.xml.impl.BasicXmlAttributeDescriptor;
 import com.intellij.xml.impl.XmlAttributeDescriptorEx;
-import com.element.ElementIcons;
+import com.yearrow.beaverui.ElementIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

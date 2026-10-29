@@ -27,3 +27,5 @@ hs_err_pid*
 out
 build
 .gradle
+# IntelliJ Platform Gradle 插件本地 SDK 缓存（约 1GB，勿入库）
+.intellijPlatform/

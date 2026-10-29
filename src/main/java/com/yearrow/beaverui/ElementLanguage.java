@@ -1,4 +1,4 @@
-package com.element;
+package com.yearrow.beaverui;
 
 import com.intellij.lang.Language;
 

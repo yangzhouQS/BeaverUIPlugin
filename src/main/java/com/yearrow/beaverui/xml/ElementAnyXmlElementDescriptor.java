@@ -1,4 +1,4 @@
-package com.element.xml;
+package com.yearrow.beaverui.xml;
 
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
