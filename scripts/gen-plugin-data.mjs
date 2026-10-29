@@ -79,6 +79,15 @@ function parseMd(name, code) {
   return { name, cnName, tables }
 }
 
+// 从 Slots 表提取插槽名（[name](#x) 取纯名；过滤描述行）
+function slotNames(parsed) {
+  return parsed.tables
+    .filter((t) => /Slots|插槽/.test(t.section))
+    .map((t) => t.name.replace(/\[([^\]]+)\].*/, '$1').trim())
+    .filter((n) => n && n !== '名称' && n !== '插槽名' && !n.startsWith('^'))
+    .slice(0, 12)
+}
+
 // 属性值候选：可选值列直拆；无可选值列时从类型列 ^[enum]`...` 反引号段提取
 function propCandidates(row) {
   const raw = row.values && row.values !== '—' ? row.values : row.type
@@ -147,7 +156,12 @@ console.log(`picked ${comps.length} components`)
 // ---- 1) ElementTagConstant.java ----
 function genTagConstant() {
   const blocks = []
+  const slotBlocks = []
   for (const c of comps) {
+    const slots = slotNames(c)
+    if (slots.length > 0) {
+      slotBlocks.push(`        TAG_SLOTS.put("b-${c.name}", new String[]{${slots.map((s) => `"${javaEsc(s)}"`).join(', ')}});`)
+    }
     const attrRows = c.tables.filter((t) => /Attributes|属性/.test(t.section))
     const mapEntries = []
     for (const row of attrRows) {
@@ -190,9 +204,12 @@ import java.util.HashMap;
  */
 public final class ElementTagConstant {
     public static final HashMap<String, HashMap<String, String[]>> TAG_CONSTANT = new HashMap<>();
+    /** 标签 → 插槽名列表（<template #xxx> 补全用） */
+    public static final HashMap<String, String[]> TAG_SLOTS = new HashMap<>();
 
     static {
 ${blocks.join('\n\n')}
+${slotBlocks.join('\n')}
     }
 
     private ElementTagConstant() {}
@@ -282,6 +299,9 @@ function genTemplates() {
     ['Panel', `<b-panel title="\$X\$">\n  <template #tool>\n    <b-button type="primary" link>更多</b-button>\n  </template>\n  内容\n</b-panel>`, 'HTML'],
     ['ToolBar', `<b-tool-bar>\n  <template #filter>\n    <b-col :span="6"><b-filter-item label="\$X\$" label-width="80"><b-input /></b-filter-item></b-col>\n  </template>\n  <template #tool>\n    <b-button type="primary" @click="onSearch">查询</b-button>\n  </template>\n</b-tool-bar>`, 'HTML'],
     ['FlexBox', `<b-flex-box :is-row="true" :item-num="2" :item-config="[{ tag: 'main' }, { tag: 'side', isFixed: true, size: '280px', showDragButton: true }]">\n  <template #main>\$X\$</template>\n  <template #side>侧栏</template>\n</b-flex-box>`, 'HTML'],
+    ['FlexLine', `<b-flex-line left-width="50%">\n  <span>左区内容</span>\n  <template #right>\n    <b-button type="primary" link>\$X\$</b-button>\n  </template>\n</b-flex-line>`, 'HTML'],
+    ['FlexBoxTsx', '<b-flex-box is-row item-num={2} item-config={[{ tag: \'main\' }, { tag: \'side\', isFixed: true, size: \'280px\', showDragButton: true }]}>\n  <template #main>\$X\$</template>\n  <template #side>侧栏</template>\n</b-flex-box>', 'JSX'],
+    ['FlexLineTsx', '<b-flex-line left-width="50%" v-slots={{\n  default: () => (<span>左区内容</span>),\n  right: () => (<b-button type="primary" link>\$X\$</b-button>),\n}} />', 'JSX'],
     ['DateRange', `<b-date-range-picker\n  v-model="range"\n  type="daterange"\n  :shortcuts="['month', 'quarter', 'year']"\n  default-shortcut="month"\n/>`, 'HTML'],
     ['Message', '<script setup>\nimport { BMessage } from \'@cs/beaver-ui\'\nconst onClick = () => BMessage.success(\'$\')\n</script>', 'VUE_TEMPLATE_TEXT'],
   ]

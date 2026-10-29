@@ -128,6 +128,35 @@
       <option name="HTML" value="true"/>
     </context>
   </template>
+  <template name="bFlexLine" value="&lt;b-flex-line left-width=&quot;50%&quot;&gt;
+  &lt;span&gt;左区内容&lt;/span&gt;
+  &lt;template #right&gt;
+    &lt;b-button type=&quot;primary&quot; link&gt;$X$&lt;/b-button&gt;
+  &lt;/template&gt;
+&lt;/b-flex-line&gt;" description="beaver-ui FlexLine" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/>
+    </context>
+  </template>
+  <template name="bFlexBoxTsx" value="&lt;b-flex-box is-row item-num={2} item-config={[{ tag: 'main' }, { tag: 'side', isFixed: true, size: '280px', showDragButton: true }]}&gt;
+  &lt;template #main&gt;$X$&lt;/template&gt;
+  &lt;template #side&gt;侧栏&lt;/template&gt;
+&lt;/b-flex-box&gt;" description="beaver-ui FlexBoxTsx" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="JSX" value="true"/>
+    </context>
+  </template>
+  <template name="bFlexLineTsx" value="&lt;b-flex-line left-width=&quot;50%&quot; v-slots={{
+  default: () =&gt; (&lt;span&gt;左区内容&lt;/span&gt;),
+  right: () =&gt; (&lt;b-button type=&quot;primary&quot; link&gt;$X$&lt;/b-button&gt;),
+}} /&gt;" description="beaver-ui FlexLineTsx" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="JSX" value="true"/>
+    </context>
+  </template>
   <template name="bDateRange" value="&lt;b-date-range-picker
   v-model=&quot;range&quot;
   type=&quot;daterange&quot;

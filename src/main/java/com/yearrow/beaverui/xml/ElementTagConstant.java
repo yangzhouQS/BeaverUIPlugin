@@ -8,6 +8,8 @@ import java.util.HashMap;
  */
 public final class ElementTagConstant {
     public static final HashMap<String, HashMap<String, String[]>> TAG_CONSTANT = new HashMap<>();
+    /** 标签 → 插槽名列表（<template #xxx> 补全用） */
+    public static final HashMap<String, String[]> TAG_SLOTS = new HashMap<>();
 
     static {
         // table-kit 表格套件
@@ -485,6 +487,23 @@ public final class ElementTagConstant {
           m.put("focus-on-target", new String[]{"false"});
           TAG_CONSTANT.put("b-tooltip", m);
         }
+        TAG_SLOTS.put("b-list-kit", new String[]{"插槽", "item", "pagination", "empty"});
+        TAG_SLOTS.put("b-list", new String[]{"item", "empty", "pagination-left"});
+        TAG_SLOTS.put("b-search-select", new String[]{"item", "header", "footer", "loading", "empty"});
+        TAG_SLOTS.put("b-badge", new String[]{"default", "content"});
+        TAG_SLOTS.put("b-breadcrumb", new String[]{"default"});
+        TAG_SLOTS.put("b-button", new String[]{"default"});
+        TAG_SLOTS.put("b-cascader", new String[]{"default", "empty", "prefix", "suggestion-item", "tag", "header", "footer", "default", "empty"});
+        TAG_SLOTS.put("b-checkbox", new String[]{"default"});
+        TAG_SLOTS.put("b-dropdown", new String[]{"default", "dropdown", "default"});
+        TAG_SLOTS.put("b-form", new String[]{"default", "default", "label", "error"});
+        TAG_SLOTS.put("b-menu", new String[]{"default", "default", "title", "default", "title"});
+        TAG_SLOTS.put("b-popover", new String[]{"default", "reference"});
+        TAG_SLOTS.put("b-progress", new String[]{"default"});
+        TAG_SLOTS.put("b-radio", new String[]{"default"});
+        TAG_SLOTS.put("b-select", new String[]{"default", "header", "footer", "prefix", "empty", "tag", "loading", "label", "default"});
+        TAG_SLOTS.put("b-steps", new String[]{"default"});
+        TAG_SLOTS.put("b-tabs", new String[]{"default", "add-icon", "addIcon ^(deprecated)"});
     }
 
     private ElementTagConstant() {}
