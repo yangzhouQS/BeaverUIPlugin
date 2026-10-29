@@ -38,4 +38,14 @@
         <xml.elementDescriptorProvider implementation="com.yearrow.beaverui.xml.ElementTagNameProvider" order="first"/>
         <xml.attributeDescriptorsProvider implementation="com.yearrow.beaverui.xml.ElementAttributesProvider" />
     </extensions>
+
+    <actions>
+        <!-- 属性候选快捷入口：光标在 b-* 标签属性（名/值/空引号）内 Ctrl+Alt+Q 弹候选并插入 -->
+        <action id="com.yearrow.beaverui.AttrCandidates"
+                class="com.yearrow.beaverui.xml.BeaverAttrAction"
+                text="Beaver UI 属性候选"
+                description="弹出当前属性的候选值并插入">
+            <keyboard-shortcut first-keystroke="ctrl alt Q"/>
+        </action>
+    </actions>
 </idea-plugin>
