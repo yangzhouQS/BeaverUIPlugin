@@ -68,7 +68,9 @@ public class ElementAttributeDescriptor extends BasicXmlAttributeDescriptor impl
 
     @Override
     public boolean isEnumerated() {
-        return false;
+        // 有候选值的属性声明为枚举类型，IDE 才会在 type="" 内
+        // 调用 getEnumeratedValues() 提供值候选（Ctrl+Space / 自动弹窗）
+        return attributeValues != null && attributeValues.length > 0;
     }
 
     @Override
