@@ -300,8 +300,8 @@ function genTemplates() {
     ['ToolBar', `<b-tool-bar>\n  <template #filter>\n    <b-col :span="6"><b-filter-item label="\$X\$" label-width="80"><b-input /></b-filter-item></b-col>\n  </template>\n  <template #tool>\n    <b-button type="primary" @click="onSearch">查询</b-button>\n  </template>\n</b-tool-bar>`, 'HTML'],
     ['FlexBox', `<b-flex-box :is-row="true" :item-num="2" :item-config="[{ tag: 'main' }, { tag: 'side', isFixed: true, size: '280px', showDragButton: true }]">\n  <template #main>\$X\$</template>\n  <template #side>侧栏</template>\n</b-flex-box>`, 'HTML'],
     ['FlexLine', `<b-flex-line left-width="50%">\n  <span>左区内容</span>\n  <template #right>\n    <b-button type="primary" link>\$X\$</b-button>\n  </template>\n</b-flex-line>`, 'HTML'],
-    ['FlexBoxTsx', '<b-flex-box is-row item-num={2} item-config={[{ tag: \'main\' }, { tag: \'side\', isFixed: true, size: \'280px\', showDragButton: true }]}>\n  <template #main>\$X\$</template>\n  <template #side>侧栏</template>\n</b-flex-box>', 'JSX'],
-    ['FlexLineTsx', '<b-flex-line left-width="50%" v-slots={{\n  default: () => (<span>左区内容</span>),\n  right: () => (<b-button type="primary" link>\$X\$</b-button>),\n}} />', 'JSX'],
+    ['FlexBoxTsx', '<b-flex-box is-row item-num={2} item-config={[{ tag: \'main\' }, { tag: \'side\', isFixed: true, size: \'280px\', showDragButton: true }]}>\n  {{\n    main: () => ($X$),\n    side: () => (侧栏),\n  }}\n</b-flex-box>', 'JSX'],
+    ['FlexLineTsx', '<b-flex-line left-width="50%">\n  {{\n    default: () => (<span>左区内容</span>),\n    right: () => (<b-button type="primary" link>$X$</b-button>),\n  }}\n</b-flex-line>', 'JSX'],
     ['DateRange', `<b-date-range-picker\n  v-model="range"\n  type="daterange"\n  :shortcuts="['month', 'quarter', 'year']"\n  default-shortcut="month"\n/>`, 'HTML'],
     ['Message', '<script setup>\nimport { BMessage } from \'@cs/beaver-ui\'\nconst onClick = () => BMessage.success(\'$\')\n</script>', 'VUE_TEMPLATE_TEXT'],
   ]
