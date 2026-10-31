@@ -30,8 +30,9 @@
         <!-- live templates -->
         <defaultLiveTemplatesProvider implementation="com.yearrow.beaverui.ElementTemplatesProvider"/>
 
-        <!-- quick documentation (Ctrl+Q) -->
+        <!-- quick documentation (Ctrl+Q)：HTML/.vue 模板段 + TSX/JSX（TypeScript 语言域） -->
         <lang.documentationProvider language="HTML" implementationClass="com.yearrow.beaverui.document.DocumentProvider" order="first"/>
+        <lang.documentationProvider language="TypeScript" implementationClass="com.yearrow.beaverui.document.DocumentProvider" order="first"/>
 
         <!-- tag completion / attribute hints -->
         <xml.tagNameProvider implementation="com.yearrow.beaverui.xml.ElementTagNameProvider"/>
