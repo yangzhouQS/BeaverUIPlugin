@@ -278,16 +278,11 @@ ${fields.join('\n\n')}
 
 // ---- 3) beaver.xml live templates ----
 function genTemplates() {
-  // context 映射（保守组合，只使用平台稳定存在的 id）：
-  // .vue 模板段与 .html → HTML+XML；.tsx/.jsx → TYPESCRIPT+JSX。
-  // 注：不使用 VUE_TEMPLATE_TEXT——该 id 属 Vue 插件，不同版本可能不存在，
-  // 且 live template 文件中任一非法 context 会导致整组模板被静默丢弃。
-  const ctxOptions = (ctx) =>
-    ctx === 'HTML'
-      ? '<option name="HTML" value="true"/><option name="XML" value="true"/>'
-      : ctx === 'JSX'
-        ? '<option name="TYPESCRIPT" value="true"/><option name="JSX" value="true"/>'
-        : `<option name="${ctx}" value="true"/>`
+  // context 统一四注册（TYPESCRIPT+JSX+HTML+XML）：
+  // beaver 模板在 .vue/.html/.tsx/.jsx 中均有意义，宽注册无副作用；
+  // 仅使用平台稳定 id（Vue 插件专属 id 会致整组模板被静默丢弃）
+  const ctxOptions = () =>
+    '<option name="HTML" value="true"/><option name="XML" value="true"/><option name="TYPESCRIPT" value="true"/><option name="JSX" value="true"/>'
 
   const T = (name, group, value, context) => `  <template name="b${name}" value="${esc(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
