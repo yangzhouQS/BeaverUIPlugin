@@ -278,10 +278,19 @@ ${fields.join('\n\n')}
 
 // ---- 3) beaver.xml live templates ----
 function genTemplates() {
+  // context 映射：.vue 模板段=VUE_TEMPLATE_TEXT+HTML 双注册；
+  // .tsx=TYPESCRIPT（IntelliJ 的 TSX live template context id，JSX 仅限 .jsx）
+  const ctxOptions = (ctx) =>
+    ctx === 'HTML'
+      ? '<option name="HTML" value="true"/><option name="VUE_TEMPLATE_TEXT" value="true"/>'
+      : ctx === 'JSX'
+        ? '<option name="JSX" value="true"/><option name="TYPESCRIPT" value="true"/>'
+        : `<option name="${ctx}" value="true"/>`
+
   const T = (name, group, value, context) => `  <template name="b${name}" value="${esc(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="${context}" value="true"/>
+      ${ctxOptions(context)}
     </context>
   </template>`
 
