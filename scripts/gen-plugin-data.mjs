@@ -278,13 +278,15 @@ ${fields.join('\n\n')}
 
 // ---- 3) beaver.xml live templates ----
 function genTemplates() {
-  // context 映射：.vue 模板段=VUE_TEMPLATE_TEXT+HTML 双注册；
-  // .tsx=TYPESCRIPT（IntelliJ 的 TSX live template context id，JSX 仅限 .jsx）
+  // context 映射（保守组合，只使用平台稳定存在的 id）：
+  // .vue 模板段与 .html → HTML+XML；.tsx/.jsx → TYPESCRIPT+JSX。
+  // 注：不使用 VUE_TEMPLATE_TEXT——该 id 属 Vue 插件，不同版本可能不存在，
+  // 且 live template 文件中任一非法 context 会导致整组模板被静默丢弃。
   const ctxOptions = (ctx) =>
     ctx === 'HTML'
-      ? '<option name="HTML" value="true"/><option name="VUE_TEMPLATE_TEXT" value="true"/>'
+      ? '<option name="HTML" value="true"/><option name="XML" value="true"/>'
       : ctx === 'JSX'
-        ? '<option name="JSX" value="true"/><option name="TYPESCRIPT" value="true"/>'
+        ? '<option name="TYPESCRIPT" value="true"/><option name="JSX" value="true"/>'
         : `<option name="${ctx}" value="true"/>`
 
   const T = (name, group, value, context) => `  <template name="b${name}" value="${esc(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
@@ -312,7 +314,7 @@ function genTemplates() {
     ['FlexBoxTsx', '<b-flex-box is-row item-num={2} item-config={[{ tag: \'main\' }, { tag: \'side\', isFixed: true, size: \'280px\', showDragButton: true }]}>\n  {{\n    main: () => ($X$),\n    side: () => (侧栏),\n  }}\n</b-flex-box>', 'JSX'],
     ['FlexLineTsx', '<b-flex-line left-width="50%">\n  {{\n    default: () => (<span>左区内容</span>),\n    right: () => (<b-button type="primary" link>$X$</b-button>),\n  }}\n</b-flex-line>', 'JSX'],
     ['DateRange', `<b-date-range-picker\n  v-model="range"\n  type="daterange"\n  :shortcuts="['month', 'quarter', 'year']"\n  default-shortcut="month"\n/>`, 'HTML'],
-    ['Message', '<script setup>\nimport { BMessage } from \'@cs/beaver-ui\'\nconst onClick = () => BMessage.success(\'$\')\n</script>', 'VUE_TEMPLATE_TEXT'],
+    ['Message', '<script setup>\nimport { BMessage } from \'@cs/beaver-ui\'\nconst onClick = () => BMessage.success(\'$\')\n</script>', 'HTML'],
   ]
   return `<?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="beaver-ui">
