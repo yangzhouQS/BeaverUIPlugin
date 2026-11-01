@@ -151,28 +151,40 @@ const config = ref([
       <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
     </context>
   </template>
-  <template name="bFlexBoxTsx" value="&lt;b-flex-box item-num={2} item-config={config} height=&quot;300px&quot;&gt;
+  <template name="bFlexBoxTsx" value="&lt;b-flex-box
+  item-num={2}
+  item-config={[
+    { tag: 'item-1', isFixed: false, paddingSize: 'default' },
+    { tag: 'item-2', isFixed: true, size: '200px', paddingSize: 'default' },
+  ]}
+  height=&quot;280px&quot;
+&gt;
   {{
-    &quot;item-1&quot;: () =&gt; (&lt;div class=&quot;pane&quot;&gt;固定区域 1（50px）&lt;/div&gt;),
-    &quot;item-2&quot;: () =&gt; (&lt;div class=&quot;pane&quot;&gt;弹性区域 2（flex: 1）&lt;/div&gt;),
+    &quot;item-1&quot;: () =&gt; (&lt;div class=&quot;pane pane-fluid&quot;&gt;流体区（flex: 1）&lt;/div&gt;),
+    &quot;item-2&quot;: () =&gt; (&lt;div class=&quot;pane pane-fixed&quot;&gt;固定区 200px&lt;/div&gt;),
   }}
-&lt;/b-flex-box&gt;
-
-// setup 内：const config = ref([
-//   { tag: &quot;item-1&quot;, isFixed: true, size: &quot;50px&quot;, paddingSize: &quot;default&quot; },
-//   { tag: &quot;item-2&quot;, isFixed: false, size: &quot;&quot;, paddingSize: &quot;default&quot; },
-// ])" description="beaver-ui FlexBoxTsx" toReformat="false" toShortenFQNames="true">
+&lt;/b-flex-box&gt;" description="beaver-ui FlexBoxTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
       <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
     </context>
   </template>
-  <template name="bFlexLineTsx" value="&lt;b-flex-line left-width=&quot;50%&quot;&gt;
+  <template name="bFlexLineTsx" value="&lt;b-flex-line :gap={10}&gt;
   {{
-    default: () =&gt; (&lt;span&gt;左区内容&lt;/span&gt;),
-    right: () =&gt; (&lt;b-button type=&quot;primary&quot; link&gt;$X$&lt;/b-button&gt;),
+    default: () =&gt; (&lt;div class=&quot;demo-area&quot;&gt;左区（默认 50%）&lt;/div&gt;),
+    right: () =&gt; (&lt;div class=&quot;demo-area&quot;&gt;右区（占满剩余，右对齐）&lt;/div&gt;),
   }}
 &lt;/b-flex-line&gt;" description="beaver-ui FlexLineTsx" toReformat="false" toShortenFQNames="true">
+    <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+    </context>
+  </template>
+  <template name="bFilterItemTsx" value="&lt;b-filter-item label=&quot;项目名称&quot; label-width={90}&gt;
+  {{
+    default: ({ id }: any) =&gt; (&lt;b-input id={id} placeholder=&quot;请输入项目名称&quot; clearable /&gt;),
+  }}
+&lt;/b-filter-item&gt;" description="beaver-ui FilterItemTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
       <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
