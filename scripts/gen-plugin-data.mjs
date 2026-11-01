@@ -320,8 +320,10 @@ function genTemplates() {
     ['Message', '<script setup>\nimport { BMessage } from \'@cs/beaver-ui\'\nconst onClick = () => BMessage.success(\'$\')\n</script>', 'HTML'],
   ]
   return `<?xml version="1.0" encoding="UTF-8"?>
-<templateSet group="beaver-ui">
-<!-- 自动生成：scripts/gen-plugin-data.mjs；数据快照 beaver-ui 1.0.0 -->
+<templateSet group="BeaverUI">
+<!-- 自动生成：scripts/gen-plugin-data.mjs；数据快照 beaver-ui 1.0.0
+     组名从 beaver-ui 改为 BeaverUI：规避 IDE 模板缓存（删除组后记入
+     deletedKeys，重装同名组不再加载，改组名即重新注册） -->
 ${items.map(([n, v, ctx]) => T(n, 'beaver-ui', v, ctx)).join('\n')}
 </templateSet>
 `
