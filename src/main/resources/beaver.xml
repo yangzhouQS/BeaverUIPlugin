@@ -119,10 +119,22 @@
       <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
     </context>
   </template>
-  <template name="bFlexBox" value="&lt;b-flex-box :is-row=&quot;true&quot; :item-num=&quot;2&quot; :item-config=&quot;[{ tag: 'main' }, { tag: 'side', isFixed: true, size: '280px', showDragButton: true }]&quot;&gt;
-  &lt;template #main&gt;$X$&lt;/template&gt;
-  &lt;template #side&gt;侧栏&lt;/template&gt;
-&lt;/b-flex-box&gt;" description="beaver-ui FlexBox" toReformat="false" toShortenFQNames="true">
+  <template name="bFlexBox" value="&lt;b-flex-box :item-num=&quot;2&quot; :item-config=&quot;config&quot; height=&quot;300px&quot;&gt;
+  &lt;template #item-1&gt;
+    &lt;div class=&quot;pane&quot;&gt;固定区域 1（50px）&lt;/div&gt;
+  &lt;/template&gt;
+  &lt;template #item-2&gt;
+    &lt;div class=&quot;pane&quot;&gt;弹性区域 2（flex: 1）&lt;/div&gt;
+  &lt;/template&gt;
+&lt;/b-flex-box&gt;
+
+&lt;script setup&gt;
+import { ref } from 'vue'
+const config = ref([
+  { tag: 'item-1', isFixed: true, size: '50px', paddingSize: 'default' },
+  { tag: 'item-2', isFixed: false, size: '', paddingSize: 'default' },
+])
+&lt;/${'script'}&gt;" description="beaver-ui FlexBox" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
       <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
@@ -139,12 +151,17 @@
       <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
     </context>
   </template>
-  <template name="bFlexBoxTsx" value="&lt;b-flex-box is-row item-num={2} item-config={[{ tag: 'main' }, { tag: 'side', isFixed: true, size: '280px', showDragButton: true }]}&gt;
+  <template name="bFlexBoxTsx" value="&lt;b-flex-box item-num={2} item-config={config} height=&quot;300px&quot;&gt;
   {{
-    main: () =&gt; ($X$),
-    side: () =&gt; (侧栏),
+    &quot;item-1&quot;: () =&gt; (&lt;div class=&quot;pane&quot;&gt;固定区域 1（50px）&lt;/div&gt;),
+    &quot;item-2&quot;: () =&gt; (&lt;div class=&quot;pane&quot;&gt;弹性区域 2（flex: 1）&lt;/div&gt;),
   }}
-&lt;/b-flex-box&gt;" description="beaver-ui FlexBoxTsx" toReformat="false" toShortenFQNames="true">
+&lt;/b-flex-box&gt;
+
+// setup 内：const config = ref([
+//   { tag: &quot;item-1&quot;, isFixed: true, size: &quot;50px&quot;, paddingSize: &quot;default&quot; },
+//   { tag: &quot;item-2&quot;, isFixed: false, size: &quot;&quot;, paddingSize: &quot;default&quot; },
+// ])" description="beaver-ui FlexBoxTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
       <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
