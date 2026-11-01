@@ -109,7 +109,7 @@ public class BeaverAttrAction extends AnAction {
         showCandidates(editor, tag, attr, null);
     }
 
-    /** 弹候选并插入（attribute 为 null 时用文本方式写值） */
+    /** 弹候选并插入（attribute 为 null 时用文本方式写值）；末项为在线文档跳转入口 */
     private static void showCandidates(Editor editor, String tagName, String attrName, @Nullable XmlAttribute attribute) {
         HashMap<String, HashMap<String, String[]>> tags = ElementTagConstant.TAG_CONSTANT;
         HashMap<String, String[]> attrs = tags.get(tagName);
@@ -118,10 +118,23 @@ public class BeaverAttrAction extends AnAction {
         if (values == null || values.length == 0) return;
         Project project = editor.getProject();
 
+        String tagKey = tagName.startsWith("b-") ? tagName.substring(2) : tagName;
+        String docUrl = "https://beaver-ui.yearrow.com/component/" + tagKey;
+        String docEntry = "→ 查看组件在线文档";
+
+        java.util.List<String> items = new java.util.ArrayList<>(java.util.Arrays.asList(values));
+        items.add(docEntry);
+
         PopupChooserBuilder<String> builder = (PopupChooserBuilder<String>) JBPopupFactory.getInstance()
-                .createPopupChooserBuilder(Arrays.asList(values))
-                .setTitle("b-" + tagName + " · " + attrName + " 可选值")
-                .setItemChosenCallback((selectedValue) -> insertValue(project, editor, attribute, selectedValue));
+                .createPopupChooserBuilder(items)
+                .setTitle("b-" + tagKey + " · " + attrName + " 可选值")
+                .setItemChosenCallback((selectedValue) -> {
+                    if (docEntry.equals(selectedValue)) {
+                        com.intellij.ide.BrowserUtil.browse(docUrl);
+                    } else {
+                        insertValue(project, editor, attribute, selectedValue);
+                    }
+                });
         JBPopup popup = builder.createPopup();
         popup.showInBestPositionFor(editor);
     }
