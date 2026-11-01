@@ -50,7 +50,7 @@ public class DocumentProvider extends AbstractDocumentationProvider {
 
         // 分支一：属性值上下文（引号内 / 属性名上）—— 返回该属性可选值清单
         String attrDoc = tryAttributeDoc(originalElement);
-        if (attrDoc != null) return attrDoc;
+        if (attrDoc != null) return wrapHtml(attrDoc);
 
         // 分支二：标签名上下文 —— 返回组件完整 API 文档（原有逻辑）
         String text = originalElement.getText();
@@ -62,13 +62,22 @@ public class DocumentProvider extends AbstractDocumentationProvider {
         for (Field field : fields) {
             if (textHandle.equals(field.getName()) && field.getType().toString().endsWith("java.lang.String")) {
                 try {
-                    return (String) field.get(DocumentConstant.class);
+                    return wrapHtml((String) field.get(DocumentConstant.class));
                 } catch (IllegalAccessException e) {
                     return null;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * quick doc 渲染器对完整 HTML 文档（html/body 包装）按富文本渲染并可点击链接；
+     * 裸片段在部分版本会被当纯文本显示源码。
+     */
+    @NotNull
+    private static String wrapHtml(String content) {
+        return "<html><body>" + content + "</body></html>";
     }
 
     /**
