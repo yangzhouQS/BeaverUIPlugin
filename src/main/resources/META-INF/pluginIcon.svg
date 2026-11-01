@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 360">
+  <defs>
+    <g id="beaver-mark">
+      <g transform="rotate(-6 120 52)">
+        <path fill="#F5C51D" d="M110 4h26l3 13H107z"/>
+        <path fill="#F5C51D" d="M84 16L116 8h14l32 8 26 48H52z"/>
+        <path fill="#F5C51D" d="M46 62L196 59l2 12q0 11-12 11L56 84q-10 0-10-10z"/>
+      </g>
+      <g fill="#FFFFFF" transform="translate(112 44) rotate(-6)">
+        <rect x="-2.4" y="-14" width="4.8" height="28" rx="2"/>
+        <rect x="-2.4" y="-14" width="4.8" height="28" rx="2" transform="rotate(45)"/>
+        <rect x="-2.4" y="-14" width="4.8" height="28" rx="2" transform="rotate(90)"/>
+        <rect x="-2.4" y="-14" width="4.8" height="28" rx="2" transform="rotate(135)"/>
+        <circle r="10"/>
+      </g>
+      <circle cx="112" cy="44" r="4.4" fill="#F5C51D"/>
+      <path fill="#1D4C8E" d="M50 96L150 92l46 18 20 20v18l-10 4 10 8v14l-10 30-36 6-24 4-26 0-30-4-40-12z"/>
+      <circle cx="150" cy="116" r="9" fill="#FFFFFF"/>
+      <path fill="#FFFFFF" d="M166 164h30v28h-30z"/>
+      <path fill="#1D4C8E" d="M120 224l88 36v54l-88 36-88-36v-54z"/>
+      <path fill="#FFFFFF" fill-rule="evenodd" d="M86 258h30c19 0 31 8 31 21 0 8-3 13-10 16 10 4 15 10 15 19 0 12-11 19-30 19H86zm22 12v13h12c8 0 12-2 12-6.5s-4-6.5-12-6.5zm0 18v13h15c8 0 13-3 13-6.5s-5-6.5-13-6.5z"/>
+      <path fill="#1D4C8E" d="M32 288l44-17 44 17 44-17 44 17v11l-44-17-44 17-44-17-44 17z"/>
+    </g>
+  </defs>
+  <use href="#beaver-mark"/>
+</svg>

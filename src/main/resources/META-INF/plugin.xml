@@ -40,6 +40,10 @@
         <xml.tagNameProvider implementation="com.yearrow.beaverui.xml.ElementTagNameProvider"/>
         <xml.elementDescriptorProvider implementation="com.yearrow.beaverui.xml.ElementTagNameProvider" order="first"/>
         <xml.attributeDescriptorsProvider implementation="com.yearrow.beaverui.xml.ElementAttributesProvider" />
+
+        <!-- TSX/JSX（Vue JSX）补全：标签名/属性名/属性值（文本启发式） -->
+        <completion.contributor language="TypeScript" implementationClass="com.yearrow.beaverui.xml.BeaverJsxCompletionContributor"/>
+        <completion.contributor language="JavaScript" implementationClass="com.yearrow.beaverui.xml.BeaverJsxCompletionContributor"/>
     </extensions>
 
     <actions>

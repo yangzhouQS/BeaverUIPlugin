@@ -1,27 +1,45 @@
-改项目修改自<a href="https://github.com/jiaolong1021/ElementPlugin">https://github.com/jiaolong1021/ElementPlugin </a>，该插件已经不兼容idea2023以后的版本。由于作者已经不维护该项目。因此我禁用了部分不兼容代码达到了兼容的idea2023以及及之后的版本。
+# BeaverUIPlugin
 
-如有侵权请告知 我会立即删除。
+Beaver UI 组件库的 JetBrains IDE（IDEA / WebStorm）开发辅助插件。
 
-# ElementPlugin
-idea plugin for develop with element ui. before use, you must install <a href="https://github.com/JetBrains/intellij-plugins/tree/master/vuejs">vuejs</a> plugin.
-## basic functions
-### 1 . see tag document (win: ctrl + Q, mac: ^ + j), the keyboard shortcut same as quick document
-![](./img/doc.gif)
-### 2. live templates (ctrl + space)
-![](./img/tip.gif)
-### 3. edit through tag name
-![](./img/tag.gif)
-### 4. tag property tip
-![](./img/property.gif)
-### 5. method tip (begin width elm )
-include [message, alert, confirm, notify, prompt]
-![](./img/methods.gif)
-### 6. attribute tip and auto complete <a>(new)</a>
-![](./img/attr-tip.gif)
-## download
-if you use webstorm or IntelliJ IDEA, you can download from plugin repositories.
-![](./img/idea.png)
+## 功能
 
-or you can direct download from <a href="https://plugins.jetbrains.com/plugin/10524-element">jetbrains plugins repository</a> 
-## questions feedback
-if you has any questions or good idea, you can call me by qq: **2278371826** or by email **shenjiaolong1021@163.com** 
+| 能力 | 入口 | 生效文件 |
+| --- | --- | --- |
+| **标签补全**——输入 `<b-` 弹出全部组件标签 | 输入时自动 / Ctrl+Space | .vue 模板段 / .html / .xml |
+| **属性值候选**——`type=""` 引号内弹出枚举值（如 primary/success/…） | Ctrl+Space | 同上 |
+| **组件速查文档**——标签名上弹出完整 API 表（属性/事件/插槽） | Ctrl+Q | .vue / .html / **.tsx** |
+| **属性候选弹窗**——任意属性位置弹出全部候选值，选中直接写入引号内 | **Ctrl+Alt+Q** | .vue / .tsx（含空引号） |
+| **代码模板**——高频组件骨架一键展开 | 缩写 + Tab | .vue（模板段与 script 段）/ .tsx / .jsx |
+| **在线文档跳转**——文档弹窗与候选弹窗均可跳转组件官网 | 点击链接 / 选末项 | beaver-ui.yearrow.com |
+
+## 代码模板（Live Templates）
+
+| 缩写 | 生成 |
+| --- | --- |
+| `bButton` / `bInput` / `bSelect` / `bDatePicker` | 基础表单组件骨架 |
+| `bForm` | 表单 + 校验规则骨架 |
+| `bDialog` | 对话框 + footer 按钮 |
+| `bTableOnly` / `bTableAsync` | 表格套件（含 column-configs 旧版列协议） |
+| `bListAsync` | 列表套件（#item 卡片插槽） |
+| `bSearchSelect` | 远程搜索选择（load 协议：take = pageSize + 1） |
+| `bPanel` / `bToolBar` | 面板 / 查询工具栏骨架 |
+| `bFlexBox` / `bFlexLine` | 弹性分区 / 左右分栏（.vue 形态） |
+| `bFlexBoxTsx` / `bFlexLineTsx` | 同上 **.tsx 形态**（`{{ slot: () => (...) }}` 双花括号插槽写法） |
+| `bDateRange` | 报表期间选择器 |
+| `bMessage` | BMessage 消息调用 |
+
+## 安装
+
+1. 下载 [Releases](https://github.com/yangzhouQS/BeaverUIPlugin/releases) 中的 `BeaverUIPlugin-x.y.z.zip`
+2. IDE → Settings → Plugins → ⚙ → **Install Plugin from Disk…** → 选择 zip → 重启
+
+依赖：IDE 内置 Vue 插件（WebStorm 自带；IDEA 需装 Vue.js 插件）。
+
+## 版本
+
+- **1.0.0**：数据快照对应 beaver-ui 1.0.0（44 组件：table-kit/list-kit/search 系等自研套件 + 高频基础组件）；兼容 IDEA/WebStorm 2023.1+
+
+## 致谢
+
+基于 [ElementPlugin](https://github.com/jiaolong1021/ElementPlugin)（element-ui 插件，已停止维护）二次开发重构，感谢原作者 shenjiaolong1021。
