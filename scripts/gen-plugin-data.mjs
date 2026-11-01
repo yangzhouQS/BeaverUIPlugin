@@ -278,11 +278,15 @@ ${fields.join('\n\n')}
 
 // ---- 3) beaver.xml live templates ----
 function genTemplates() {
-  // context 统一四注册（TYPESCRIPT+JSX+HTML+XML）：
-  // beaver 模板在 .vue/.html/.tsx/.jsx 中均有意义，宽注册无副作用；
-  // 仅使用平台稳定 id（Vue 插件专属 id 会致整组模板被静默丢弃）
+  // context 六注册（依据实测文档校准的 id）：
+  // 平台原生 HTML/XML（.html/.xml）+ Vue 插件 VUE_TEMPLATE/VUE_SCRIPT/TSX/JSX
+  // （.vue 模板段 / .vue script 段 / Vue JSX .tsx/.jsx）。
+  // 关键坑：Vue JSX 的 tsx context id 是 TSX（Vue 插件注册），不是平台的
+  // TYPESCRIPT；.vue 模板段是 VUE_TEMPLATE（非 VUE_TEMPLATE_TEXT）。
   const ctxOptions = () =>
-    '<option name="HTML" value="true"/><option name="XML" value="true"/><option name="TYPESCRIPT" value="true"/><option name="JSX" value="true"/>'
+    '<option name="HTML" value="true"/><option name="XML" value="true"/>'
+    + '<option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/>'
+    + '<option name="TSX" value="true"/><option name="JSX" value="true"/>'
 
   const T = (name, group, value, context) => `  <template name="b${name}" value="${esc(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>

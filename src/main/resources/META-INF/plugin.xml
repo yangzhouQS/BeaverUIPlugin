@@ -22,6 +22,8 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>JavaScript</depends>
+    <!-- VUE_TEMPLATE/VUE_SCRIPT/TSX/JSX 四个 live template context 由 Vue 插件注册 -->
+    <depends>org.jetbrains.plugins.vue</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <fileTypeFactory implementation="com.yearrow.beaverui.ElementFileTypeFactory" />
