@@ -256,8 +256,9 @@ function genDocConstant() {
     }
     // DocumentProvider 反射按「标签去 - 全小写」匹配 field 名（b-table-only → btableonly）
     const fieldName = ('b' + c.name).replace(/-/g, '')
-    // 单引号 href + 不经 esc（quick doc 渲染器对 &quot; 属性定界兼容性不稳）
-    const docLink = `<a href='${url}' target='_blank'>查看组件在线文档</a>`
+    // QuickDoc 渲染器不支持 target 属性（会破坏链接可点性）——仅裸 <a href='https://...'>，
+    // 点击时 IDE 自动唤起系统浏览器
+    const docLink = `<a href='${url}'>查看组件在线文档</a>`
     fields.push(`    /** b-${c.name} ${c.cnName} */\n    public static String ${fieldName} = ${JSON.stringify(docLink)} + "<br>" +\n        ${parts.map((p) => JSON.stringify(p)).join(' +\n        ')};`)
     // 壳组件文档字段：直接引用所属 kit 的文档内容（别名）
     for (const [shell, kit] of Object.entries(SHELL_DOC_LINKS)) {

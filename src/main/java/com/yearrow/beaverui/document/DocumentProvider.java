@@ -111,7 +111,8 @@ public class DocumentProvider extends AbstractDocumentationProvider {
             sb.append("<tr><td><code>").append(StringUtil.escapeXml(v)).append("</code></td></tr>");
         }
         sb.append("</tbody></table>");
-        sb.append("<br><a href=\"").append(site).append("\" target=\"_blank\">查看组件文档</a>");
+        // QuickDoc 不支持 target 属性（破坏链接），裸 <a href> 点击由 IDE 唤起浏览器
+        sb.append("<br><a href=\"").append(site).append("\">查看组件在线文档</a>");
         return sb.toString();
     }
 }
