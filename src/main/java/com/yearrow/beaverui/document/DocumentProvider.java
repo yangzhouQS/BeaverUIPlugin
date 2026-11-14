@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Map;
 
 /**
@@ -94,8 +94,29 @@ public class DocumentProvider extends AbstractDocumentationProvider {
 
         String tagName = tag.getName();
         String attrName = attribute.getName();
-        HashMap<String, HashMap<String, String[]>> tags = ElementTagConstant.TAG_CONSTANT;
-        HashMap<String, String[]> attrs = tags.get(tagName);
+
+        String tagKey0 = tagName.startsWith("b-") ? tagName.substring(2) : tagName;
+        String site0 = "https://beaver-ui.yearrow.com/component/" + tagKey0;
+
+        // #插槽伪属性（#xxx / v-slot / slot）：列出该标签的全部插槽名
+        if (attrName.startsWith("#") || attrName.equals("v-slot") || attrName.equals("slot")) {
+            String[] slots = ElementTagConstant.TAG_SLOTS.get(tagName);
+            if (slots == null || slots.length == 0) return null;
+            StringBuilder slotSb = new StringBuilder();
+            slotSb.append("<b>").append(StringUtil.escapeXml(tagName)).append("</b> · 可用插槽：");
+            slotSb.append("<table><thead><tr><th>插槽名</th><th>写法</th></tr></thead><tbody>");
+            for (String slot : slots) {
+                slotSb.append("<tr><td><code>#").append(StringUtil.escapeXml(slot)).append("</code></td><td><code>#")
+                      .append(StringUtil.escapeXml(slot)).append("=\"{ { row } }\"</code> 或 TSX <code>{{ ")
+                      .append(StringUtil.escapeXml(slot)).append(": () => ... }}</code></td></tr>");
+            }
+            slotSb.append("</tbody></table>");
+            slotSb.append("<br><a href=\"").append(site0).append("\">查看组件在线文档</a>");
+            return slotSb.toString();
+        }
+
+        Map<String, Map<String, String[]>> tags = ElementTagConstant.TAG_CONSTANT;
+        Map<String, String[]> attrs = tags.get(tagName);
         if (attrs == null) return null;
         final String[] values = attrs.get(attrName);
         if (values == null || values.length == 0) return null;

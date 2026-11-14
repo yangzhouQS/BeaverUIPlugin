@@ -1,215 +1,231 @@
-// 从 docs-website 组件 md 生成 IDEA 插件三件套数据（TagConstant / DocumentConstant / live templates）
+// beaver-ui 数据集 → IDEA 插件三件套数据（ElementTagConstant / DocumentConstant / live templates）
 // 用法：node scripts/gen-plugin-data.mjs
-// 数据源：../docs-website/component/*.md（83 份结构化 API 表）
+// 数据源：data/beaver-ui@1.0.1.json（beaver-ui-mcp `npm run dataset:build` 从文档站提取）
+//        + beaver-ui/src/component.ts（B* 注册表 → b-* 标签的权威来源）
+// 产物：src/main/java/.../xml/ElementTagConstant.java（属性候选 + 插槽 + 全局指令）
+//       src/main/java/.../document/DocumentConstant.java（Ctrl+Q 速查 HTML）
+//       src/main/resources/beaver.xml（Live Templates：template + tsx 双形态）
 import fs from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
 
 const HERE = path.dirname(url.fileURLToPath(import.meta.url))
-const MD_DIR = path.resolve(HERE, '..', '..', '2026-08-31beaver-ui', 'docs-website', 'component')
 const OUT_DIR = path.resolve(HERE, '..', 'src', 'main')
 
 // ============ 配置 ============
-// 优先收录的自研/高频组件（其余 EP 组件也收，但排除已移除组件）
-const PRIORITY = [
-  'table-kit', 'list-kit', 'list', 'search-select', 'search-tree-select',
-  'search-tree-panel', 'date-range-picker', 'panel', 'tool-bar', 'box',
-  'flex-box', 'flex-line', 'filter-item', 'grid',
-]
-// 已移除组件（迁移指南清单，防误导提示）
-const EXCLUDED = ['infinite-scroll', 'skeleton']
-// EP 组件中值得提示的高频子集（避免 83 全量塞入插件，控制体积；优先级组件全收）
-const EP_INCLUDE = [
-  'button', 'input', 'select', 'date-picker', 'form', 'table', 'dialog',
-  'radio', 'checkbox', 'switch', 'tag', 'pagination', 'message', 'notification',
-  'dropdown', 'tabs', 'tree-select', 'cascader', 'popover', 'tooltip',
-  'input-number', 'time-picker', 'divider', 'empty', 'progress', 'badge',
-  'alert', 'card', 'avatar', 'breadcrumb', 'steps', 'menu', 'tooltip',
-]
+const sourceConfig = JSON.parse(fs.readFileSync(path.resolve(HERE, '..', 'data', 'source.json'), 'utf-8'))
+const datasetPath = path.resolve(HERE, '..', sourceConfig.dataset)
+const componentTsPath = path.resolve(HERE, '..', sourceConfig.componentTs)
+const SITE = sourceConfig.docsSite ?? 'https://beaver-ui.yearrow.com'
+const SNAPSHOT = 'beaver-ui 1.0.1'
 
-const SITE = 'https://beaver-ui.yearrow.com/component'
+const dataset = JSON.parse(fs.readFileSync(datasetPath, 'utf-8'))
+const componentTs = fs.readFileSync(componentTsPath, 'utf-8')
 
-// ============ md 解析 ============
-function parseMd(name, code) {
-  const lines = code.split('\n')
-  // 标题行：# List 列表 → 中文备注
-  const h1 = (lines.find((l) => l.startsWith('# ')) || '').replace(/^#\s+/, '')
-  const cnName = (h1.match(/[\u4e00-\u9fa5].*$/) || [''])[0].trim()
+// ============ 标签注册表 ============
+// component.ts 中的 B* 标识符 → b-* 标签。注意 BAlert 这类「单驼峰」直接跑通用
+// camelToKebab 会得到 balert（B 前无小写边界），必须先剥掉首字母 B。
+const ids = [...new Set(componentTs.match(/\bB[A-Z][A-Za-z0-9]*\b/g) ?? [])]
+const camelToKebab = (s) => s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase()
+const registryOrder = []
+for (const id of ids) {
+  const tag = 'b-' + camelToKebab(id.replace(/^B/, ''))
+  if (!registryOrder.includes(tag)) registryOrder.push(tag)
+}
+const registry = new Set(registryOrder)
 
-  // 收集各 section 表格：### Xxx Attributes/Events/Slots/Exposes 等
-  const tables = [] // { section, rows: [{ name, desc, type, values, def }] }
-  let section = ''
-  let header = null
-  for (const line of lines) {
-    if (line.startsWith('### ')) { section = line.replace(/^###\s+/, '').trim(); continue }
-    if (line.startsWith('## ')) { section = ''; continue }
-    if (/^\|/.test(line)) {
-      // md 表格内的转义管道（\| 或 \\|）先占位，避免 split('|') 切碎枚举段
-      const guarded = line.replace(/\\\\\|/g, '\u0002').replace(/\\\|/g, '\u0002')
-      const cells = guarded.split('|').map((c) => c.replace(/\u0002/g, '\\|').trim())
-      if (cells[0] === '' ) cells.shift()
-      if (cells[cells.length - 1] === '') cells.pop()
-      if (cells.every((c) => /^:?-{2,}:?$/.test(c) || c === '')) continue // 分隔行
-      if (/属性名|参数|事件名|插槽|方法名|名称/.test(cells[0]) && /说明/.test(cells[1] || '')) {
-        header = cells; continue
-      }
-      if (header && cells.length >= 3) {
-        // 按表头定位列：可选值列存在则用之；EP 四列表（无可选值列）
-        // 时从类型列的 ^[enum]`...` 反引号段提取候选
-        const hIdx = (h) => header.findIndex((c) => c.includes(h))
-        const valuesIdx = hIdx('可选值') >= 0 ? hIdx('可选值') : -1
-        const typeIdx = hIdx('类型') >= 0 ? hIdx('类型') : -1
-        const defIdx = hIdx('默认值') >= 0 ? hIdx('默认值') : -1
-        const isEvents = /事件名/.test(header[0]) || /事件/.test(header[0])
-        const isSlots = /插槽名/.test(header[0]) || /插槽/.test(header[0])
-        tables.push({
-          section,
-          name: cells[0],
-          desc: cells[1] || '',
-          type: typeIdx >= 0 ? cells[typeIdx] || '' : (cells[2] || ''),
-          values: valuesIdx >= 0 ? (cells[valuesIdx] || '') : '',
-          def: defIdx >= 0 ? (cells[defIdx] || '') : '',
-          isEvents, isSlots,
-        })
-      }
-    } else if (line.trim() && !line.startsWith('|')) {
-      header = null
-    }
+// 套件页：页面主标签不在注册表（文档的是一组壳组件），通用子表复制到全部壳标签
+const KIT_SPECIAL = {
+  'table-kit': ['b-table-only', 'b-table-async', 'b-table-report', 'b-tree-table', 'b-table-edit'],
+  'list-kit': ['b-list-only', 'b-list-async', 'b-list-report'],
+}
+// 指令文档页：不产出标签数据，属性并入全局指令候选
+const DIRECTIVE_PAGES = ['loading', 'auto-tip', 'highlight-query']
+
+const norm = (s) =>
+  s.replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '').toLowerCase()
+
+const escHtml = (s) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+const cleanDescribe = (s) => (s ?? '').replace(/\^new\b/gi, '').replace(/\^\s*$/, '').trim()
+
+/** 成员属性名归一：model-value / v-model → v-model */
+function memberName(name, isEvent) {
+  let n = (name ?? '').trim()
+  if (n.includes('/')) {
+    const parts = n.split('/').map((p) => p.trim())
+    n = parts.includes('v-model') ? 'v-model' : parts[0]
   }
-  return { name, cnName, tables }
+  return isEvent ? '@' + n : n
 }
 
-// 从 Slots 表提取插槽名（[name](#x) 取纯名；过滤描述行）
-function slotNames(parsed) {
-  return parsed.tables
-    .filter((t) => /Slots|插槽/.test(t.section))
-    .map((t) => t.name.replace(/\[([^\]]+)\].*/, '$1').trim())
-    .filter((n) => n && n !== '名称' && n !== '插槽名' && !n.startsWith('^'))
-    .slice(0, 12)
+/** 属性候选值：类型串按 | 拆分取 'x' 引号项；boolean → true/false；函数类型无候选 */
+function candidatesOf(member) {
+  const type = (member.type ?? '').trim()
+  if (!type) return []
+  if (/=>|function/i.test(type)) return []
+  if (/^boolean\b/.test(type)) return ['true', 'false']
+  const values = type
+    .split('|')
+    .map((part) => {
+      const m = part.trim().match(/^'([^']*)'$/)
+      return m ? m[1] : null
+    })
+    .filter((v) => v !== null && v !== '' && v !== 'deprecated' && !/^\(.+\)$/.test(v) && v.length <= 24)
+  return [...new Set(values)].slice(0, 12)
 }
 
-// 属性值候选：可选值列直拆；无可选值列时从类型列 ^[enum]`...` 反引号段提取
-function propCandidates(row) {
-  const raw = row.values && row.values !== '—' ? row.values : row.type
-  if (!raw) return []
-  const enumMatch = raw.match(/`([^`]*)`/)
-  const src = enumMatch ? enumMatch[1] : raw
-  // 管道分隔（含转义 \|）统一占位为分隔符，拆分后再还原
-  const cleaned = src
-    .replace(/\\\s*\|/g, '\u0001')
-    .replace(/^\^\[[^\]]*\]/, '')
-  const TYPE_WORDS = new Set(['string', 'number', 'boolean', 'array', 'object', 'function', 'component', 'symbol', 'date', 'any', 'void', 'string[]', 'number[]', 'boolean[]'])
-  return [...new Set(
-    cleaned.split(/[\u0001/、,]/)
-      .map((s) => s.trim()
-        .replace(/\u0001/g, '|')
-        .replace(/`/g, '')
-        .replace(/'/g, '')
-        .replace(/\\+/g, ' ')
-        .replace(/^\^+/, '')
-        .trim())
-      .filter((s) => s && s !== '—' && s !== '*' && !s.includes('^[') && !/[<>（(]/.test(s) && !/^\[[a-z]+\]$/i.test(s) && !TYPE_WORDS.has(s) && s.length <= 24),
-  )].slice(0, 12)
-}
+// ============ 解析数据集 → 标签数据 ============
+const pages = dataset.components
+const pageNames = new Set(pages.map((p) => p.name))
+const tagData = new Map() // tag → { page, attrs[], events[], slots[], exposes[] }
 
-// Java 字符串字面量转义（双引号/反斜杠）
-const javaEsc = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
-// HTML 转义
-const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-
-// ============ 套件壳组件标签（独立注册但共用 kit 文档的属性集） ============
-// [壳标签, 所属kit标签, 追加特有属性候选]
-const SHELL_TAGS = [
-  ['b-table-only', 'b-table-kit', { data: ['rows'] }],
-  ['b-table-async', 'b-table-kit', { 'table-data': ['{ result, count }'], input: ['{ take: 20, draw: 1 }'] }],
-  ['b-table-report', 'b-table-kit', { data: ['rows'] }],
-  ['b-tree-table', 'b-table-kit', { 'tree-config': ['lazy', 'children', 'transform'], 'row-key': ['id'] }],
-  ['b-table-edit', 'b-table-kit', { 'edit-config': ['click', 'dblclick', 'manual'] }],
-  ['b-list-only', 'b-list-kit', { data: ['rows'] }],
-  ['b-list-async', 'b-list-kit', { 'list-data': ['{ result, count }'] }],
-  ['b-list-report', 'b-list-kit', { data: ['rows'] }],
-]
-
-// ============ 生成 ============
-function pickComponents() {
-  const files = fs.readdirSync(MD_DIR).filter((f) => f.endsWith('.md') && f !== 'overview.md' && f !== 'border.md' && f !== 'color.md')
-  const picked = []
-  for (const f of files) {
-    const name = f.replace('.md', '')
-    if (EXCLUDED.includes(name)) continue
-    const isPriority = PRIORITY.includes(name)
-    const isEpWanted = EP_INCLUDE.includes(name)
-    if (!isPriority && !isEpWanted) continue
-    picked.push(parseMd(name, fs.readFileSync(path.join(MD_DIR, f), 'utf-8')))
-  }
-  // 优先组件排前
-  picked.sort((a, b) => {
-    const ai = PRIORITY.indexOf(a.name), bi = PRIORITY.indexOf(b.name)
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi)
+function emitTag(tag, pageEntry, sub) {
+  tagData.set(tag, {
+    page: pageEntry.name,
+    attrs: dedupeRaw([
+      ...(sub.attributes ?? []),
+      ...((sub.attributes ?? []).length ? [] : []),
+    ]),
+    events: dedupeRaw(sub.events ?? []),
+    slots: dedupeRaw(sub.slots ?? []),
+    exposes: dedupeRaw(sub.exposes ?? []),
   })
-  return picked
 }
 
-const comps = pickComponents()
-console.log(`picked ${comps.length} components`)
+function dedupeRaw(list) {
+  const map = new Map()
+  for (const item of list) map.set(item.name, item)
+  return [...map.values()]
+}
 
-// ---- 1) ElementTagConstant.java ----
+// --- pass 1：每个页面先认领自己的主标签（b-<page>）---
+const mainAssign = new Map() // 页面 → { tag, subName }
+for (const pageEntry of pages) {
+  if (!['component', 'config'].includes(pageEntry.kind)) continue
+  if (KIT_SPECIAL[pageEntry.name]) continue
+  const mainTag = `b-${pageEntry.name}`
+  if (!registry.has(mainTag)) continue
+  const subs = pageEntry.subComponents ?? []
+  const mainSub = subs.find((s) => norm(s.name) === pageEntry.name) ?? subs[0]
+  if (!mainSub) continue
+  if (tagData.has(mainTag)) continue
+  emitTag(mainTag, pageEntry, mainSub)
+  mainAssign.set(pageEntry.name, { tag: mainTag, subName: mainSub.name })
+}
+
+// --- pass 2：子组件标签 ---
+for (const pageEntry of pages) {
+  if (!['component', 'config'].includes(pageEntry.kind)) continue
+  const page = pageEntry.name
+  if (page === 'config-provider') continue // 其余子表为跨组件配置残留
+  if (KIT_SPECIAL[page]) continue
+  const main = mainAssign.get(page)
+  for (const sub of pageEntry.subComponents ?? []) {
+    const sk = norm(sub.name)
+    if (main && sk === norm(main.subName)) continue
+    if (pageNames.has(sk)) continue // 该子名是另一个文档页，标签归那个页面
+    const candidates = [`b-${sk}`, `b-${page}-${sk}`]
+    const tag = candidates.find((t) => registry.has(t) && !tagData.has(t))
+    if (!tag) continue
+    emitTag(tag, pageEntry, sub)
+  }
+}
+
+// --- pass 3：套件页复制（通用子表为底，特定子表覆盖）---
+for (const [page, tags] of Object.entries(KIT_SPECIAL)) {
+  const pageEntry = pages.find((p) => p.name === page)
+  if (!pageEntry) continue
+  const generic = (pageEntry.subComponents ?? [])[0]
+  if (!generic) continue
+  const extraSubs = (pageEntry.subComponents ?? []).slice(1)
+  for (const tag of tags) {
+    if (!registry.has(tag)) continue
+    const specific = extraSubs.find((sub) => norm(sub.name) && tag.endsWith(`-${norm(sub.name)}`))
+    emitTag(tag, pageEntry, {
+      name: tag,
+      attributes: dedupeRaw([...(generic.attributes ?? []), ...(specific?.attributes ?? [])]),
+      events: dedupeRaw([...(generic.events ?? []), ...(specific?.events ?? [])]),
+      slots: dedupeRaw([...(generic.slots ?? []), ...(specific?.slots ?? [])]),
+      exposes: dedupeRaw([...(generic.exposes ?? []), ...(specific?.exposes ?? [])]),
+    })
+  }
+}
+
+// ============ 全局指令候选 ============
+const directives = []
+for (const name of DIRECTIVE_PAGES) {
+  const pageEntry = pages.find((p) => p.name === name)
+  for (const member of pageEntry?.subComponents?.[0]?.attributes ?? []) {
+    directives.push({ name: memberName(member.name, false), candidates: candidatesOf(member) })
+  }
+}
+// v-infinite-scroll：beaver-ui 保留的 EP 同源指令（无文档页）
+directives.push(
+  { name: 'v-infinite-scroll', candidates: [] },
+  { name: 'infinite-scroll-disabled', candidates: ['true', 'false'] },
+  { name: 'infinite-scroll-delay', candidates: [] },
+  { name: 'infinite-scroll-distance', candidates: [] },
+  { name: 'infinite-scroll-immediate', candidates: ['true', 'false'] },
+)
+
+// ============ 生成 1) ElementTagConstant.java ============
+const javaEsc = (s) => s.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+const candArr = (list) => `new String[]{${list.map((v) => `"${javaEsc(v)}"`).join(', ')}}`
+
 function genTagConstant() {
-  const blocks = []
+  const tagBlocks = []
   const slotBlocks = []
-  for (const c of comps) {
-    const slots = slotNames(c)
-    if (slots.length > 0) {
-      slotBlocks.push(`        TAG_SLOTS.put("b-${c.name}", new String[]{${slots.map((s) => `"${javaEsc(s)}"`).join(', ')}});`)
+  for (const [tag, data] of tagData) {
+    const attrEntries = []
+    for (const member of data.attrs) {
+      const name = memberName(member.name, false)
+      if (!name || name === 'null') continue
+      attrEntries.push(`      m.put("${javaEsc(name)}", ${candArr(candidatesOf(member))});`)
     }
-    const attrRows = c.tables.filter((t) => /Attributes|属性/.test(t.section))
-    const mapEntries = []
-    for (const row of attrRows) {
-      // 链接形式 [name](#xx) 取纯名
-      const attrName = row.name.replace(/\[([^\]]+)\].*/, '$1').trim()
-      if (!attrName || attrName.startsWith('^')) continue
-      const cands = propCandidates(row)
-      if (cands.length > 0) {
-        mapEntries.push(`          m.put("${attrName}", new String[]{${cands.map((v) => `"${javaEsc(v)}"`).join(', ')}});`)
-      }
-    }
-    if (mapEntries.length === 0) continue
-    blocks.push(`        // ${c.name} ${c.cnName}
-        {
-          HashMap<String, String[]> m = new HashMap<>();
-${mapEntries.join('\n')}
-          TAG_CONSTANT.put("b-${c.name}", m);
-        }`)
-    // 套件壳组件：复用 kit 属性集 + 追加特有属性
-    for (const [shell, kit, extra] of SHELL_TAGS) {
-      if (kit !== `b-${c.name}`) continue
-      const extraEntries = Object.entries(extra)
-        .map(([k, vs]) => `          m.put("${k}", new String[]{${vs.map((v) => `"${javaEsc(v)}"`).join(', ')}});`)
-      blocks.push(`        // ${shell}（${kit} 壳组件）
-        {
-          HashMap<String, String[]> m = new HashMap<>();
-${mapEntries.join('\n')}
-${extraEntries.join('\n')}
-          TAG_CONSTANT.put("${shell}", m);
-        }`)
+    if (attrEntries.length === 0) continue
+    tagBlocks.push(`    // ${tag}（${data.page}）
+    {
+      LinkedHashMap<String, String[]> m = new LinkedHashMap<>();
+${attrEntries.join('\n')}
+      TAG_CONSTANT.put("${tag}", m);
+    }`)
+    if (data.slots.length) {
+      slotBlocks.push(
+        `    TAG_SLOTS.put("${tag}", new String[]{${data.slots
+          .slice(0, 12)
+          .map((s) => `"${javaEsc(s.name)}"`)
+          .join(', ')}});`,
+      )
     }
   }
+  const directiveEntries = directives.map((d) => `    TAG_DIRECTIVES.put("${javaEsc(d.name)}", ${candArr(d.candidates)});`)
   return `package com.yearrow.beaverui.xml;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * b-* 标签属性值候选（自动生成：scripts/gen-plugin-data.mjs ← docs-website/component/*.md）
- * 数据快照：beaver-ui 1.0.0
+ * b-* 标签属性候选 + 插槽名 + 全局指令（自动生成：scripts/gen-plugin-data.mjs ← beaver-ui 数据集）
+ * 数据快照：${SNAPSHOT}（${tagData.size} 个标签 / ${directives.length} 条全局指令）
+ *
+ * TAG_CONSTANT：标签 → 全部属性（候选值为空数组时仅参与属性名补全，不参与值补全）
+ * TAG_SLOTS：标签 → 插槽名（#xxx 伪属性与 v-slot 补全用）
+ * TAG_DIRECTIVES：全局指令及配套属性（任意标签可用）
  */
 public final class ElementTagConstant {
-    public static final HashMap<String, HashMap<String, String[]>> TAG_CONSTANT = new HashMap<>();
+    public static final Map<String, Map<String, String[]>> TAG_CONSTANT = new LinkedHashMap<>();
     /** 标签 → 插槽名列表（<template #xxx> 补全用） */
-    public static final HashMap<String, String[]> TAG_SLOTS = new HashMap<>();
+    public static final Map<String, String[]> TAG_SLOTS = new LinkedHashMap<>();
+    /** 全局指令及配套属性（任意标签可用） */
+    public static final Map<String, String[]> TAG_DIRECTIVES = new LinkedHashMap<>();
 
     static {
-${blocks.join('\n\n')}
+${tagBlocks.join('\n\n')}
 ${slotBlocks.join('\n')}
+
+${directiveEntries.join('\n')}
     }
 
     private ElementTagConstant() {}
@@ -217,61 +233,54 @@ ${slotBlocks.join('\n')}
 `
 }
 
-// ---- 2) DocumentConstant.java ----
+// ============ 生成 2) DocumentConstant.java ============
 function genDocConstant() {
   const fields = []
-  for (const c of comps) {
-    if (c.tables.length === 0) continue
-    const url = `${SITE}/${c.name}`
-    // 壳组件文档：指向 kit 文档页（同一份 API 表即涵盖全部壳组件）
-    const SHELL_DOC_LINKS = {
-      'b-table-only': 'b-table-kit', 'b-table-async': 'b-table-kit',
-      'b-table-report': 'b-table-kit', 'b-tree-table': 'b-table-kit',
-      'b-table-edit': 'b-table-kit',
-      'b-list-only': 'b-list-kit', 'b-list-async': 'b-list-kit',
-      'b-list-report': 'b-list-kit',
-    }
-    const groups = new Map()
-    for (const row of c.tables) {
-      const sec = row.section.replace(/^(.*?)(Attributes|Events|Slots|Exposes|属性|事件|插槽).*$/, '$1$2').trim()
-      if (!groups.has(sec)) groups.set(sec, [])
-      groups.get(sec).push(row)
-    }
+  for (const [tag, data] of tagData) {
+    const url = `${SITE}/component/${data.page}`
     const parts = []
-    for (const [sec, rows] of groups) {
-      const isEvents = /Events|事件/.test(sec)
-      const isSlots = /Slots|插槽/.test(sec)
-      const head = isEvents
-        ? '<tr><th>事件名</th><th>说明</th><th>回调参数</th></tr>'
-        : isSlots
-          ? '<tr><th>插槽名</th><th>说明</th></tr>'
-          : '<tr><th>参数</th><th>说明</th><th>类型</th><th>可选值</th><th>默认值</th></tr>'
-      const body = rows.map((r) => {
-        const dep = r.name.includes('deprecated') ? ' <b style="color:#f56c6c">[已废弃]</b>' : ''
-        const nm = esc(r.name.replace(/\s*\^\(.*?\)/g, '').replace(/\s*\^\[.*?\]\(.*?\)/g, '').trim())
-        if (isEvents || isSlots) return `<tr><td>${nm}${dep}</td><td>${esc(r.desc)}</td>${isEvents ? `<td>${esc(r.type)}</td>` : ''}</tr>`
-        return `<tr><td>${nm}${dep}</td><td>${esc(r.desc)}</td><td>${esc(r.type)}</td><td>${esc(r.values)}</td><td>${esc(r.def)}</td></tr>`
-      }).join('')
-      parts.push(`<table><thead>${head}</thead><tbody>${body}</tbody></table>`)
+    const section = (title, rows, kind) => {
+      if (!rows.length) return
+      const head =
+        kind === 'events'
+          ? '<tr><th>事件名</th><th>说明</th><th>回调参数</th></tr>'
+          : kind === 'slots'
+            ? '<tr><th>插槽名</th><th>说明</th></tr>'
+            : kind === 'exposes'
+              ? '<tr><th>方法/属性</th><th>说明</th><th>类型</th></tr>'
+              : '<tr><th>参数</th><th>说明</th><th>类型</th><th>可选值</th><th>默认值</th></tr>'
+      const body = rows
+        .map((r) => {
+          const nm = memberName(r.name, kind === 'events').replace(/^@/, '')
+          const dep = r.deprecated ? ' <b style="color:#f56c6c">[已废弃]</b>' : ''
+          const since = r.since ? ` <i>(${r.since} 起)</i>` : ''
+          const escName = escHtml(nm) + dep + since
+          if (kind === 'events') return `<tr><td>${escName}</td><td>${escHtml(cleanDescribe(r.description))}</td><td>${escHtml(r.type ?? '')}</td></tr>`
+          if (kind === 'slots') return `<tr><td>${escName}</td><td>${escHtml(cleanDescribe(r.description))}</td></tr>`
+          if (kind === 'exposes') return `<tr><td>${escName}</td><td>${escHtml(cleanDescribe(r.description))}</td><td>${escHtml(r.type ?? '')}</td></tr>`
+          const cands = candidatesOf(r).filter((v) => v !== 'true' && v !== 'false')
+          return `<tr><td>${escName}</td><td>${escHtml(cleanDescribe(r.description))}</td><td>${escHtml(r.type ?? '')}</td><td>${escHtml(cands.join(' / ') || '—')}</td><td>${escHtml(r.default ?? '—')}</td></tr>`
+        })
+        .join('')
+      parts.push(`<h4>${title}</h4><table><thead>${head}</thead><tbody>${body}</tbody></table>`)
     }
-    // DocumentProvider 反射按「标签去 - 全小写」匹配 field 名（b-table-only → btableonly）
-    const fieldName = ('b' + c.name).replace(/-/g, '')
-    // QuickDoc 渲染器不支持 target 属性（会破坏链接可点性）——仅裸 <a href='https://...'>，
-    // 点击时 IDE 自动唤起系统浏览器
-    const docLink = `<a href='${url}'>查看组件在线文档</a>`
-    fields.push(`    /** b-${c.name} ${c.cnName} */\n    public static String ${fieldName} = ${JSON.stringify(docLink)} + "<br>" +\n        ${parts.map((p) => JSON.stringify(p)).join(' +\n        ')};`)
-    // 壳组件文档字段：直接引用所属 kit 的文档内容（别名）
-    for (const [shell, kit] of Object.entries(SHELL_DOC_LINKS)) {
-      if (kit !== `b-${c.name}`) continue
-      const shellField = shell.replace(/-/g, '')
-      fields.push(`    /** ${shell}（${kit} 壳组件，文档同 kit） */\n    public static String ${shellField} = ${fieldName};`)
-    }
+    const title = `b-${data.page}` === tag ? tag : tag
+    section('Attributes 属性', data.attrs, 'attrs')
+    section('Events 事件', data.events, 'events')
+    section('Slots 插槽', data.slots, 'slots')
+    section('Exposes 暴露', data.exposes, 'exposes')
+    if (parts.length === 0) continue
+    const docLink = `<a href='${url}'>查看 ${tag} 在线文档</a>`
+    const fieldName = tag.replace(/-/g, '')
+    fields.push(
+      `    /** ${tag} */\n    public static String ${fieldName} = ${JSON.stringify(docLink)} + "<br>" +\n        ${parts.map((p) => JSON.stringify(p)).join(' +\n        ')};`,
+    )
   }
   return `package com.yearrow.beaverui.document;
 
 /**
- * 组件快速文档 HTML（自动生成：scripts/gen-plugin-data.mjs ← docs-website/component/*.md）
- * 数据快照：beaver-ui 1.0.0
+ * 组件快速文档 HTML（自动生成：scripts/gen-plugin-data.mjs ← beaver-ui 数据集）
+ * 数据快照：${SNAPSHOT}
  */
 public final class DocumentConstant {
 ${fields.join('\n\n')}
@@ -279,60 +288,93 @@ ${fields.join('\n\n')}
 `
 }
 
-// ---- 3) beaver.xml live templates ----
+// ============ 生成 3) beaver.xml live templates ============
 function genTemplates() {
-  // context 六注册（依据实测文档校准的 id）：
-  // 平台原生 HTML/XML（.html/.xml）+ Vue 插件 VUE_TEMPLATE/VUE_SCRIPT/TSX/JSX
-  // （.vue 模板段 / .vue script 段 / Vue JSX .tsx/.jsx）。
-  // 关键坑：Vue JSX 的 tsx context id 是 TSX（Vue 插件注册），不是平台的
-  // TYPESCRIPT；.vue 模板段是 VUE_TEMPLATE（非 VUE_TEMPLATE_TEXT）。
+  // context 六注册：平台 HTML/XML + Vue 插件 VUE_TEMPLATE/VUE_SCRIPT/TSX/JSX
+  // （Vue JSX 的 tsx context id 是 TSX（Vue 插件注册），.vue 模板段是 VUE_TEMPLATE）
   const ctxOptions = () =>
     '<option name="HTML" value="true"/><option name="XML" value="true"/>'
     + '<option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/>'
     + '<option name="TSX" value="true"/><option name="JSX" value="true"/>'
 
-  const T = (name, group, value, context) => `  <template name="b${name}" value="${esc(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
+  const T = (name, value) => `  <template name="b${name}" value="${escHtml(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      ${ctxOptions(context)}
+      ${ctxOptions()}
     </context>
   </template>`
 
   const items = [
-    ['Button', `<b-button type="primary">\$X\$</b-button>`, 'HTML'],
-    ['Input', `<b-input v-model="form.\$X\$" placeholder="请输入" clearable />`, 'HTML'],
-    ['Select', `<b-select v-model="form.\$X\$" placeholder="请选择" clearable />`, 'HTML'],
-    ['DatePicker', `<b-date-picker v-model="form.\$X\$" type="daterange" start-placeholder="开始时间" end-placeholder="结束时间" />`, 'HTML'],
-    ['Dialog', `<b-dialog v-model="dialogVisible" title="\$X\$" width="600px">\n  <template #footer>\n    <b-button @click="dialogVisible = false">取消</b-button>\n    <b-button type="primary" @click="onConfirm">确定</b-button>\n  </template>\n</b-dialog>`, 'HTML'],
-    ['Form', `<b-form ref="formRef" :model="form" :rules="rules" label-width="100px">\n  <b-form-item label="\$X\$" prop="name">\n    <b-input v-model="form.name" />\n  </b-form-item>\n</b-form>`, 'HTML'],
-    ['TableOnly', `<b-table-only\n  :table-data="rows"\n  :column-configs="columns"\n  @reload="load"\n/>`, 'HTML'],
-    ['TableAsync', `<b-table-async\n  ref="tableRef"\n  :table-data="tableData"\n  :column-configs="columns"\n  :table-loading="loading"\n  :input="{ take: 20, draw: 1 }"\n  @query-change="handleQueryChange"\n/>`, 'HTML'],
-    ['ListAsync', `<b-list-async\n  :list-data="listData"\n  item-key="id"\n  @reload="load"\n>\n  <template #item="{ row }">\n    <b-box>\n      <p>\$X\$</p>\n    </b-box>\n  </template>\n</b-list-async>`, 'HTML'],
-    ['SearchSelect', `<b-search-select\n  v-model="value"\n  @load="({ skip, take, keyword }, resolve) =>\n    searchApi({ keyword, skip, take }).then((r) => resolve(r.result))"\n/>`, 'HTML'],
-    ['Panel', `<b-panel title="\$X\$">\n  <template #tool>\n    <b-button type="primary" link>更多</b-button>\n  </template>\n  内容\n</b-panel>`, 'HTML'],
-    ['ToolBar', `<b-tool-bar>\n  <template #filter>\n    <b-col :span="6"><b-filter-item label="\$X\$" label-width="80"><b-input /></b-filter-item></b-col>\n  </template>\n  <template #tool>\n    <b-button type="primary" @click="onSearch">查询</b-button>\n  </template>\n</b-tool-bar>`, 'HTML'],
-    ['FlexBox', `<b-flex-box :item-num="2" :item-config="config" height="300px">\n  <template #item-1>\n    <div class="pane">固定区域 1（50px）</div>\n  </template>\n  <template #item-2>\n    <div class="pane">弹性区域 2（flex: 1）</div>\n  </template>\n</b-flex-box>\n\n<script setup>\nimport { ref } from 'vue'\nconst config = ref([\n  { tag: 'item-1', isFixed: true, size: '50px', paddingSize: 'default' },\n  { tag: 'item-2', isFixed: false, size: '', paddingSize: 'default' },\n])\n</\${'script'}>`, 'HTML'],
-    ['FlexLine', `<b-flex-line left-width="50%">\n  <span>左区内容</span>\n  <template #right>\n    <b-button type="primary" link>\$X\$</b-button>\n  </template>\n</b-flex-line>`, 'HTML'],
-    ['FlexBoxTsx', '<b-flex-box\n  item-num={2}\n  item-config={[\n    { tag: \'item-1\', isFixed: false, paddingSize: \'default\' },\n    { tag: \'item-2\', isFixed: true, size: \'200px\', paddingSize: \'default\' },\n  ]}\n  height="280px"\n>\n  {{\n    "item-1": () => (<div class="pane pane-fluid">流体区（flex: 1）</div>),\n    "item-2": () => (<div class="pane pane-fixed">固定区 200px</div>),\n  }}\n</b-flex-box>', 'JSX'],
-    ['FlexLineTsx', '<b-flex-line :gap={10}>\n  {{\n    default: () => (<div class="demo-area">左区（默认 50%）</div>),\n    right: () => (<div class="demo-area">右区（占满剩余，右对齐）</div>),\n  }}\n</b-flex-line>', 'JSX'],
-    ['FilterItemTsx', '<b-filter-item label="项目名称" label-width={90}>\n  {{\n    default: ({ id }: any) => (<b-input id={id} placeholder="请输入项目名称" clearable />),\n  }}\n</b-filter-item>', 'JSX'],
-    ['DateRange', `<b-date-range-picker\n  v-model="range"\n  type="daterange"\n  :shortcuts="['month', 'quarter', 'year']"\n  default-shortcut="month"\n/>`, 'HTML'],
-    ['Message', '<script setup>\nimport { BMessage } from \'@cs/beaver-ui\'\nconst onClick = () => BMessage.success(\'$\')\n</script>', 'HTML'],
+    // ---- 基础表单 ----
+    ['Button', `<b-button type="primary">$X$</b-button>`],
+    ['Input', `<b-input v-model="form.$X$" placeholder="请输入" clearable />`],
+    ['Select', `<b-select v-model="form.$X$" placeholder="请选择" clearable />`],
+    ['SelectV2', `<b-select-v2 v-model="form.$X$" :options="options" placeholder="请选择" filterable clearable />`],
+    ['Cascader', `<b-cascader v-model="form.$X$" :options="options" :props="{ checkStrictly: true }" clearable />`],
+    ['TreeSelect', `<b-tree-select v-model="form.$X$" :data="treeData" :props="{ label: 'name' }" clearable />`],
+    ['DatePicker', `<b-date-picker v-model="form.$X$" type="daterange" start-placeholder="开始时间" end-placeholder="结束时间" />`],
+    ['DatePickerPanel', `<b-date-picker-panel v-model="date" type="date" />`],
+    ['Calendar', `<b-calendar v-model="date" />`],
+    ['Dialog', `<b-dialog v-model="dialogVisible" title="$X$" width="600px">\n  <template #footer>\n    <b-button @click="dialogVisible = false">取消</b-button>\n    <b-button type="primary" @click="onConfirm">确定</b-button>\n  </template>\n</b-dialog>`],
+    ['Form', `<b-form ref="formRef" :model="form" :rules="rules" label-width="100px">\n  <b-form-item label="$X$" prop="name">\n    <b-input v-model="form.name" />\n  </b-form-item>\n</b-form>`],
+    // ---- 布局 / 容器 ----
+    ['Box', `<b-box padding-size="default" border>\n  $X$\n</b-box>`],
+    ['Panel', `<b-panel title="$X$">\n  <template #tool>\n    <b-button type="primary" link>更多</b-button>\n  </template>\n  内容\n</b-panel>`],
+    ['ToolBar', `<b-tool-bar>\n  <template #filter>\n    <b-col :span="6"><b-filter-item label="$X$" label-width="80"><b-input /></b-filter-item></b-col>\n  </template>\n  <template #tool>\n    <b-button type="primary" @click="onSearch">查询</b-button>\n  </template>\n</b-tool-bar>`],
+    ['FlexBox', `<b-flex-box :item-num="2" :item-config="config" height="300px">\n  <template #item-1>\n    <div class="pane">固定区域 1（50px）</div>\n  </template>\n  <template #item-2>\n    <div class="pane">弹性区域 2（flex: 1）</div>\n  </template>\n</b-flex-box>\n\n<script setup>\nimport { ref } from 'vue'\nconst config = ref([\n  { tag: 'item-1', isFixed: true, size: '50px', paddingSize: 'default' },\n  { tag: 'item-2', isFixed: false, size: '', paddingSize: 'default' },\n])\n</${'script'}>`],
+    ['FlexLine', `<b-flex-line left-width="50%">\n  <span>左区内容</span>\n  <template #right>\n    <b-button type="primary" link>$X$</b-button>\n  </template>\n</b-flex-line>`],
+    ['Divider', `<b-divider foldable title="折叠区" v-model="folded">\n  $X$\n</b-divider>`],
+    ['Navigation', `<b-navigation :routers="routers" />`],
+    // ---- 表格套件 ----
+    ['TableOnly', `<b-table-only\n  :table-data="rows"\n  :column-configs="columns"\n  :table-loading="loading"\n  height="320"\n/>`],
+    ['TableAsync', `<b-table-async\n  ref="tableRef"\n  :table-data="tableData"\n  :column-configs="columns"\n  :table-loading="loading"\n  :input="{ take: 20, draw: 1 }"\n  @query-change="handleQueryChange"\n/>`],
+    ['TableReport', `<b-table-report\n  :data="rows"\n  :columns="columns"\n  height="320"\n/>`],
+    ['TreeTable', `<b-tree-table\n  :data="rows"\n  :columns="columns"\n  row-key="id"\n  :tree-config="{ children: 'children' }"\n  height="360"\n/>`],
+    ['TableEdit', `<b-table-edit\n  ref="tableRef"\n  :column-configs="columns"\n  :table-data="rows"\n  :keyboard-config="{ enabled: true }"\n  :rules="{ name: [{ required: true, message: '名称必填' }] }"\n  height="320"\n>\n  <template #edit_name="{ row }">\n    <b-input v-model="row.name" size="small" />\n  </template>\n</b-table-edit>`],
+    // ---- 列表套件 ----
+    ['ListOnly', `<b-list-only :list-data="rows" height="240" fill wrap>\n  <template #item="{ row }">\n    <b-box>{{ row.$X$ }}</b-box>\n  </template>\n</b-list-only>`],
+    ['ListAsync', `<b-list-async\n  :list-data="listData"\n  item-key="id"\n  @reload="load"\n>\n  <template #item="{ row }">\n    <b-box>\n      <p>$X$</p>\n    </b-box>\n  </template>\n</b-list-async>`],
+    ['ListReport', `<b-list-report :list-data="rows" height="240">\n  <template #item="{ row }">\n    <b-box>{{ row.$X$ }}</b-box>\n  </template>\n</b-list-report>`],
+    // ---- 搜索系列 ----
+    ['SearchSelect', `<b-search-select\n  v-model="value"\n  @load="({ skip, take, keyword }, resolve) =>\n    searchApi({ keyword, skip, take }).then((r) => resolve(r.result))"\n/>`],
+    ['SearchTreeSelect', `<b-search-tree-select\n  v-model="value"\n  :data="roots"\n  :page-size="20"\n  searchable\n  :props="{ label: 'name', value: 'id' }"\n  style="width: 320px"\n  @load="onLoad"\n  @load-search="onSearch"\n/>`],
+    ['SearchTreePanel', `<b-search-tree-panel\n  v-model="value"\n  :data="roots"\n  :props="{ label: 'name', value: 'id' }"\n  @load="onLoad"\n/>`],
+    // ---- 其他高频 ----
+    ['LabelExtend', `<b-label-extend :content="text" placement="top" />`],
+    ['Collapse', `<b-collapse v-model="active">\n  <b-collapse-item title="$X$" name="1">内容</b-collapse-item>\n</b-collapse>`],
+    ['Transfer', `<b-transfer v-model="value" :data="transferData" :titles="['源', '目标']" filterable />`],
+    ['DateRange', `<b-date-range-picker\n  v-model="range"\n  type="daterange"\n  :shortcuts="['month', 'quarter', 'year']"\n  default-shortcut="month"\n/>`],
+    ['Message', `<script setup>\nimport { BMessage } from '@cs/beaver-ui'\nconst onClick = () => BMessage.success('$')\n</script>`],
+    // ---- TSX 形态（{{ slot: () => ... }} 双花括号插槽）----
+    ['GridTsx', `<b-grid\n  data={rows}\n  columns={columns}\n  height="360"\n  border\n>\n  {{\n    empty: () => <span>暂无记录</span>,\n  }}\n</b-grid>`],
+    ['TableAsyncTsx', `<b-table-async\n  ref={tableRef}\n  table-data={tableData}\n  column-configs={columns}\n  input={{ take: 20, draw: 1 }}\n  onQueryChange={handleQueryChange}\n/>`],
+    ['TableEditTsx', `<b-table-edit\n  ref={tableRef}\n  column-configs={columns}\n  table-data={rows}\n  height="320"\n>\n  {{\n    edit_name: ({ row }: any) => <b-input v-model={row.name} size="small" />,\n  }}\n</b-table-edit>`],
+    ['ListAsyncTsx', `<b-list-async\n  list-data={listData}\n  item-key="id"\n  height="320"\n>\n  {{\n    item: ({ row }: any) => (\n      <b-box>{row.materialName}</b-box>\n    ),\n  }}\n</b-list-async>`],
+    ['SearchSelectTsx', `<b-search-select\n  v-model={value}\n  load={({ skip, take, keyword }, resolve) =>\n    searchApi({ keyword, skip, take }).then((r) => resolve(r.result))\n  }\n/>`],
+    ['SearchTreeSelectTsx', `<b-search-tree-select\n  v-model={value}\n  data={roots}\n  page-size={20}\n  searchable\n  props={{ label: 'name', value: 'id' }}\n  style="width: 320px"\n  onLoad={(node, resolve) => loadChildren(node, resolve)}\n/>`],
+    ['FlexBoxTsx', `<b-flex-box\n  item-num={2}\n  item-config={[\n    { tag: 'item-1', isFixed: false, paddingSize: 'default' },\n    { tag: 'item-2', isFixed: true, size: '200px', paddingSize: 'default' },\n  ]}\n  height="280px"\n>\n  {{\n    "item-1": () => (<div class="pane pane-fluid">流体区（flex: 1）</div>),\n    "item-2": () => (<div class="pane pane-fixed">固定区 200px</div>),\n  }}\n</b-flex-box>`],
+    ['FlexLineTsx', `<b-flex-line :gap={10}>\n  {{\n    default: () => (<div class="demo-area">左区（默认 50%）</div>),\n    right: () => (<div class="demo-area">右区（占满剩余，右对齐）</div>),\n  }}\n</b-flex-line>`],
+    ['FilterItemTsx', `<b-filter-item label="项目名称" label-width={90}>\n  {{\n    default: ({ id }: any) => (<b-input id={id} placeholder="请输入项目名称" clearable />),\n  }}\n</b-filter-item>`],
+    ['BoxTsx', `<b-box padding-size="default" border>\n  {{\n    default: () => (<div>$X$</div>),\n  }}\n</b-box>`],
   ]
   return `<?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="BeaverUI">
-<!-- 自动生成：scripts/gen-plugin-data.mjs；数据快照 beaver-ui 1.0.0
+<!-- 自动生成：scripts/gen-plugin-data.mjs；数据快照 ${SNAPSHOT}
      组名从 beaver-ui 改为 BeaverUI：规避 IDE 模板缓存（删除组后记入
      deletedKeys，重装同名组不再加载，改组名即重新注册） -->
-${items.map(([n, v, ctx]) => T(n, 'beaver-ui', v, ctx)).join('\n')}
+${items.map(([n, v]) => T(n, v)).join('\n')}
 </templateSet>
 `
 }
 
-// ---- 写出 ----
+// ============ 写出 ============
 fs.mkdirSync(path.join(OUT_DIR, 'java', 'com', 'yearrow', 'beaverui', 'xml'), { recursive: true })
 fs.mkdirSync(path.join(OUT_DIR, 'java', 'com', 'yearrow', 'beaverui', 'document'), { recursive: true })
 fs.writeFileSync(path.join(OUT_DIR, 'java', 'com', 'yearrow', 'beaverui', 'xml', 'ElementTagConstant.java'), genTagConstant(), 'utf-8')
 fs.writeFileSync(path.join(OUT_DIR, 'java', 'com', 'yearrow', 'beaverui', 'document', 'DocumentConstant.java'), genDocConstant(), 'utf-8')
 fs.writeFileSync(path.join(OUT_DIR, 'resources', 'beaver.xml'), genTemplates(), 'utf-8')
-console.log('generated: ElementTagConstant.java / DocumentConstant.java / beaver.xml')
+
+const totalAttrs = [...tagData.values()].reduce((n, d) => n + d.attrs.length, 0)
+const totalSlots = [...tagData.values()].reduce((n, d) => n + d.slots.length, 0)
+console.log(`generated: ElementTagConstant.java / DocumentConstant.java / beaver.xml`)
+console.log(`标签 ${tagData.size}｜属性 ${totalAttrs}｜插槽 ${totalSlots}｜全局指令 ${directives.length}`)

@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.yearrow.beaverui</id>
     <name>Beaver UI</name>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <vendor url="https://beaver-ui.yearrow.com">yearrow</vendor>
 
     <idea-version since-build="223.0"/>
@@ -9,12 +9,16 @@
     <description><![CDATA[
         Beaver UI 组件库的 JetBrains IDE 开发辅助插件：提供 b-* 标签自动补全、属性名与属性值提示、
         组件速查文档（Ctrl+Q，链接至组件官网）以及常用代码模板（Live Templates）。<br>
-        内置数据对应 beaver-ui 1.0.0（含 table-kit / list-kit / search 系列等自研组件与高频基础组件）。<br>
+        内置数据对应 beaver-ui 1.0.1：全量 106 个 b-* 标签（含全部子组件与 table-kit / list-kit 套件）、1800+ 属性候选、插槽名补全（模板 #xxx 与 TSX {{ }} 双形态）、全局指令补全（v-loading / v-auto-tip / v-highlight-query / v-infinite-scroll），模板段与 TSX/JSX 双形态均可正常使用。<br>
         基于 <a href="https://github.com/jiaolong1021/ElementPlugin">ElementPlugin</a>（element-ui 插件，已停止维护）
         二次开发重构，感谢原作者。
 ]]></description>
 
     <change-notes><![CDATA[
+      1.1.0：数据全量对齐 beaver-ui 1.0.1（106 标签 / 1837 属性 / 194 插槽 / 34 指令）；
+      属性名补全覆盖全部属性（不再局限于带枚举值属性）；新增插槽补全（模板 #伪属性 + TSX {{ }} 内
+      slotName: () =&gt; 候选）；新增全局指令补全；Live Templates 扩充至 44 条（含 10 条 TSX 形态）；
+      数据改由 beaver-ui 数据集驱动，可随组件库升级一键重新对齐（scripts/gen-plugin-data.mjs）。<br>
       1.0.0：品牌重塑为 Beaver UI；内置 beaver-ui 1.0.0 全量数据（b-* 标签、属性候选、
       速查文档、Live Templates）；构建链升级至 intellij-platform-gradle-plugin 2.x，
       兼容 IDEA 2023.1 及以上版本。

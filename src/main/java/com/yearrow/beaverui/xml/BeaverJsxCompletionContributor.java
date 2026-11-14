@@ -9,7 +9,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TSX/JSX（Vue JSX）中的 b-* 补全：标签名 / 属性名 / 属性值。
@@ -54,8 +54,20 @@ public class BeaverJsxCompletionContributor extends CompletionContributor implem
             // 定位光标所属标签名（属性名/属性值场景需要）
             String tagName = findEnclosingTag(text, offset);
             if (tagName == null) return;
-            HashMap<String, String[]> attrs = ElementTagConstant.TAG_CONSTANT.get(tagName);
+            Map<String, String[]> attrs = ElementTagConstant.TAG_CONSTANT.get(tagName);
             if (attrs == null) return;
+
+            // 场景 1.5：插槽名——光标处于标签的 {{ ... }} 插槽对象内（TSX 双花括号插槽），
+            // 提供 `slotName: () => ` 形式候选
+            if (inSlotObject(text, offset)) {
+                String[] slots = ElementTagConstant.TAG_SLOTS.get(tagName);
+                if (slots != null && slots.length > 0) {
+                    for (String slot : slots) {
+                        result.addElement(LookupElementBuilder.create(slot + ": () => "));
+                    }
+                    return;
+                }
+            }
 
             // 场景二：属性名——光标在标签开区内、正在敲标识符（不含 = 或引号）
             if (isInTagOpen(text, offset, tagName)) {
@@ -83,6 +95,28 @@ public class BeaverJsxCompletionContributor extends CompletionContributor implem
             }
         } catch (Exception ignored) {
         }
+    }
+
+    /** 光标前最近一个未闭合标签的 '<' 位置（-1 无） */
+    private static int tagStartBefore(CharSequence text, int offset) {
+        for (int i = offset - 1; i >= 0 && i >= offset - 2000; i--) {
+            char ch = text.charAt(i);
+            if (ch == '>') return -1; // 已越过上一标签结束
+            if (ch == '<') return i;
+        }
+        return -1;
+    }
+
+    /** 光标是否处于标签的 {{ ... }} 插槽对象内（从标签起点正向配对双花括号） */
+    private static boolean inSlotObject(CharSequence text, int offset) {
+        int start = tagStartBefore(text, offset);
+        if (start < 0) return false;
+        int depth = 0;
+        for (int i = start; i < offset - 1; i++) {
+            if (text.charAt(i) == '{' && text.charAt(i + 1) == '{') { depth++; i++; }
+            else if (text.charAt(i) == '}' && text.charAt(i + 1) == '}') { depth--; i++; }
+        }
+        return depth > 0;
     }
 
     /** 向前找未闭合标签的标签名（文本扫描） */

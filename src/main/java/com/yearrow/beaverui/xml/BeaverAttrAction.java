@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 属性候选快捷入口（默认快捷键 Ctrl+Alt+Q）：
@@ -77,8 +77,8 @@ public class BeaverAttrAction extends AnAction {
             p++;
         }
         String tag = tagName.toString();
-        HashMap<String, HashMap<String, String[]>> tags = ElementTagConstant.TAG_CONSTANT;
-        HashMap<String, String[]> attrs = tags.get(tag);
+        Map<String, Map<String, String[]>> tags = ElementTagConstant.TAG_CONSTANT;
+        Map<String, String[]> attrs = tags.get(tag);
         if (attrs == null) return;
         // 从标签名后到光标，取最后一个完整/进行中的属性名
         int attrStart = -1;
@@ -111,8 +111,8 @@ public class BeaverAttrAction extends AnAction {
 
     /** 弹候选并插入（attribute 为 null 时用文本方式写值）；末项为在线文档跳转入口 */
     private static void showCandidates(Editor editor, String tagName, String attrName, @Nullable XmlAttribute attribute) {
-        HashMap<String, HashMap<String, String[]>> tags = ElementTagConstant.TAG_CONSTANT;
-        HashMap<String, String[]> attrs = tags.get(tagName);
+        Map<String, Map<String, String[]>> tags = ElementTagConstant.TAG_CONSTANT;
+        Map<String, String[]> attrs = tags.get(tagName);
         if (attrs == null) return;
         final String[] values = attrs.get(attrName);
         if (values == null || values.length == 0) return;
