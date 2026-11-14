@@ -15,7 +15,10 @@
 ]]></description>
 
     <change-notes><![CDATA[
-      1.1.0：数据全量对齐 beaver-ui 1.0.1（106 标签 / 1837 属性 / 194 插槽 / 34 指令）；
+      1.1.0：Live Templates context 修正——TSX/JSX 为平台从未注册的无效 ID（模板在 .tsx 中
+      永不生效），改为实测校准的 TSX_HTML / JSX_HTML / TS_STATEMENT / VUE_* 系；标记模板同步
+      补充 TSX_HTML/JSX_HTML（渲染函数场景）；bMessage 改为脚本语句模板。<br>
+      数据全量对齐 beaver-ui 1.0.1（106 标签 / 1837 属性 / 194 插槽 / 34 指令）；
       属性名补全覆盖全部属性（不再局限于带枚举值属性）；新增插槽补全（模板 #伪属性 + TSX {{ }} 内
       slotName: () =&gt; 候选）；新增全局指令补全；Live Templates 扩充至 44 条（含 10 条 TSX 形态）；
       数据改由 beaver-ui 数据集驱动，可随组件库升级一键重新对齐（scripts/gen-plugin-data.mjs）。<br>

@@ -6,55 +6,55 @@
   <template name="bButton" value="&lt;b-button type=&quot;primary&quot;&gt;$X$&lt;/b-button&gt;" description="beaver-ui Button" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bInput" value="&lt;b-input v-model=&quot;form.$X$&quot; placeholder=&quot;请输入&quot; clearable /&gt;" description="beaver-ui Input" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bSelect" value="&lt;b-select v-model=&quot;form.$X$&quot; placeholder=&quot;请选择&quot; clearable /&gt;" description="beaver-ui Select" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bSelectV2" value="&lt;b-select-v2 v-model=&quot;form.$X$&quot; :options=&quot;options&quot; placeholder=&quot;请选择&quot; filterable clearable /&gt;" description="beaver-ui SelectV2" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bCascader" value="&lt;b-cascader v-model=&quot;form.$X$&quot; :options=&quot;options&quot; :props=&quot;{ checkStrictly: true }&quot; clearable /&gt;" description="beaver-ui Cascader" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bTreeSelect" value="&lt;b-tree-select v-model=&quot;form.$X$&quot; :data=&quot;treeData&quot; :props=&quot;{ label: 'name' }&quot; clearable /&gt;" description="beaver-ui TreeSelect" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bDatePicker" value="&lt;b-date-picker v-model=&quot;form.$X$&quot; type=&quot;daterange&quot; start-placeholder=&quot;开始时间&quot; end-placeholder=&quot;结束时间&quot; /&gt;" description="beaver-ui DatePicker" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bDatePickerPanel" value="&lt;b-date-picker-panel v-model=&quot;date&quot; type=&quot;date&quot; /&gt;" description="beaver-ui DatePickerPanel" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bCalendar" value="&lt;b-calendar v-model=&quot;date&quot; /&gt;" description="beaver-ui Calendar" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bDialog" value="&lt;b-dialog v-model=&quot;dialogVisible&quot; title=&quot;$X$&quot; width=&quot;600px&quot;&gt;
@@ -65,7 +65,7 @@
 &lt;/b-dialog&gt;" description="beaver-ui Dialog" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bForm" value="&lt;b-form ref=&quot;formRef&quot; :model=&quot;form&quot; :rules=&quot;rules&quot; label-width=&quot;100px&quot;&gt;
@@ -75,7 +75,7 @@
 &lt;/b-form&gt;" description="beaver-ui Form" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bBox" value="&lt;b-box padding-size=&quot;default&quot; border&gt;
@@ -83,7 +83,7 @@
 &lt;/b-box&gt;" description="beaver-ui Box" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bPanel" value="&lt;b-panel title=&quot;$X$&quot;&gt;
@@ -94,7 +94,7 @@
 &lt;/b-panel&gt;" description="beaver-ui Panel" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bToolBar" value="&lt;b-tool-bar&gt;
@@ -107,7 +107,7 @@
 &lt;/b-tool-bar&gt;" description="beaver-ui ToolBar" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bFlexBox" value="&lt;b-flex-box :item-num=&quot;2&quot; :item-config=&quot;config&quot; height=&quot;300px&quot;&gt;
@@ -128,7 +128,7 @@ const config = ref([
 &lt;/script&gt;" description="beaver-ui FlexBox" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bFlexLine" value="&lt;b-flex-line left-width=&quot;50%&quot;&gt;
@@ -139,7 +139,7 @@ const config = ref([
 &lt;/b-flex-line&gt;" description="beaver-ui FlexLine" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bDivider" value="&lt;b-divider foldable title=&quot;折叠区&quot; v-model=&quot;folded&quot;&gt;
@@ -147,13 +147,13 @@ const config = ref([
 &lt;/b-divider&gt;" description="beaver-ui Divider" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bNavigation" value="&lt;b-navigation :routers=&quot;routers&quot; /&gt;" description="beaver-ui Navigation" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bTableOnly" value="&lt;b-table-only
@@ -164,7 +164,7 @@ const config = ref([
 /&gt;" description="beaver-ui TableOnly" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bTableAsync" value="&lt;b-table-async
@@ -177,7 +177,7 @@ const config = ref([
 /&gt;" description="beaver-ui TableAsync" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bTableReport" value="&lt;b-table-report
@@ -187,7 +187,7 @@ const config = ref([
 /&gt;" description="beaver-ui TableReport" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bTreeTable" value="&lt;b-tree-table
@@ -199,7 +199,7 @@ const config = ref([
 /&gt;" description="beaver-ui TreeTable" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bTableEdit" value="&lt;b-table-edit
@@ -216,7 +216,7 @@ const config = ref([
 &lt;/b-table-edit&gt;" description="beaver-ui TableEdit" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bListOnly" value="&lt;b-list-only :list-data=&quot;rows&quot; height=&quot;240&quot; fill wrap&gt;
@@ -226,7 +226,7 @@ const config = ref([
 &lt;/b-list-only&gt;" description="beaver-ui ListOnly" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bListAsync" value="&lt;b-list-async
@@ -242,7 +242,7 @@ const config = ref([
 &lt;/b-list-async&gt;" description="beaver-ui ListAsync" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bListReport" value="&lt;b-list-report :list-data=&quot;rows&quot; height=&quot;240&quot;&gt;
@@ -252,7 +252,7 @@ const config = ref([
 &lt;/b-list-report&gt;" description="beaver-ui ListReport" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bSearchSelect" value="&lt;b-search-select
@@ -262,7 +262,7 @@ const config = ref([
 /&gt;" description="beaver-ui SearchSelect" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bSearchTreeSelect" value="&lt;b-search-tree-select
@@ -277,7 +277,7 @@ const config = ref([
 /&gt;" description="beaver-ui SearchTreeSelect" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bSearchTreePanel" value="&lt;b-search-tree-panel
@@ -288,13 +288,13 @@ const config = ref([
 /&gt;" description="beaver-ui SearchTreePanel" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bLabelExtend" value="&lt;b-label-extend :content=&quot;text&quot; placement=&quot;top&quot; /&gt;" description="beaver-ui LabelExtend" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bCollapse" value="&lt;b-collapse v-model=&quot;active&quot;&gt;
@@ -302,13 +302,13 @@ const config = ref([
 &lt;/b-collapse&gt;" description="beaver-ui Collapse" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bTransfer" value="&lt;b-transfer v-model=&quot;value&quot; :data=&quot;transferData&quot; :titles=&quot;['源', '目标']&quot; filterable /&gt;" description="beaver-ui Transfer" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
   <template name="bDateRange" value="&lt;b-date-range-picker
@@ -319,16 +319,13 @@ const config = ref([
 /&gt;" description="beaver-ui DateRange" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/>
     </context>
   </template>
-  <template name="bMessage" value="&lt;script setup&gt;
-import { BMessage } from '@cs/beaver-ui'
-const onClick = () =&gt; BMessage.success('$')
-&lt;/script&gt;" description="beaver-ui Message" toReformat="false" toShortenFQNames="true">
+  <template name="bMessage" value="BMessage.success('$X$')" description="beaver-ui Message" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="VUE_SCRIPT" value="true"/><option name="TS_STATEMENT" value="true"/><option name="TS_TOP_LEVEL_STATEMENT" value="true"/><option name="JS_STATEMENT" value="true"/><option name="JS_TOP_LEVEL_STATEMENT" value="true"/>
     </context>
   </template>
   <template name="bGridTsx" value="&lt;b-grid
@@ -343,7 +340,7 @@ const onClick = () =&gt; BMessage.success('$')
 &lt;/b-grid&gt;" description="beaver-ui GridTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bTableAsyncTsx" value="&lt;b-table-async
@@ -355,7 +352,7 @@ const onClick = () =&gt; BMessage.success('$')
 /&gt;" description="beaver-ui TableAsyncTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bTableEditTsx" value="&lt;b-table-edit
@@ -370,7 +367,7 @@ const onClick = () =&gt; BMessage.success('$')
 &lt;/b-table-edit&gt;" description="beaver-ui TableEditTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bListAsyncTsx" value="&lt;b-list-async
@@ -386,7 +383,7 @@ const onClick = () =&gt; BMessage.success('$')
 &lt;/b-list-async&gt;" description="beaver-ui ListAsyncTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bSearchSelectTsx" value="&lt;b-search-select
@@ -397,7 +394,7 @@ const onClick = () =&gt; BMessage.success('$')
 /&gt;" description="beaver-ui SearchSelectTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bSearchTreeSelectTsx" value="&lt;b-search-tree-select
@@ -411,7 +408,7 @@ const onClick = () =&gt; BMessage.success('$')
 /&gt;" description="beaver-ui SearchTreeSelectTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bFlexBoxTsx" value="&lt;b-flex-box
@@ -429,7 +426,7 @@ const onClick = () =&gt; BMessage.success('$')
 &lt;/b-flex-box&gt;" description="beaver-ui FlexBoxTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bFlexLineTsx" value="&lt;b-flex-line :gap={10}&gt;
@@ -440,7 +437,7 @@ const onClick = () =&gt; BMessage.success('$')
 &lt;/b-flex-line&gt;" description="beaver-ui FlexLineTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bFilterItemTsx" value="&lt;b-filter-item label=&quot;项目名称&quot; label-width={90}&gt;
@@ -450,7 +447,7 @@ const onClick = () =&gt; BMessage.success('$')
 &lt;/b-filter-item&gt;" description="beaver-ui FilterItemTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
   <template name="bBoxTsx" value="&lt;b-box padding-size=&quot;default&quot; border&gt;
@@ -460,7 +457,7 @@ const onClick = () =&gt; BMessage.success('$')
 &lt;/b-box&gt;" description="beaver-ui BoxTsx" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      <option name="HTML" value="true"/><option name="XML" value="true"/><option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/><option name="TSX" value="true"/><option name="JSX" value="true"/>
+      <option name="TSX_HTML" value="true"/><option name="JSX_HTML" value="true"/><option name="VUE_SCRIPT" value="true"/>
     </context>
   </template>
 </templateSet>

@@ -14,7 +14,7 @@ Beaver UI 组件库的 JetBrains IDE（IDEA / WebStorm）开发辅助插件。
 | **全局指令**——任意标签可提示 v-loading / v-auto-tip / v-highlight-query / v-infinite-scroll 及配套属性 | Ctrl+Space | 同上 |
 | **组件速查文档**——标签名上弹出完整 API 表（属性/事件/插槽/暴露），插槽属性上弹出插槽写法对照 | Ctrl+Q | .vue / .html / **.tsx** |
 | **属性候选弹窗**——任意属性位置弹出全部候选值，选中直接写入引号内 | **Ctrl+Alt+Q** | .vue / .tsx（含空引号） |
-| **代码模板**——高频组件骨架一键展开（44 条，含 10 条 TSX 形态） | 缩写 + Tab | .vue（模板段与 script 段）/ .tsx / .jsx |
+| **代码模板**——高频组件骨架一键展开（44 条，含 10 条 TSX 形态） | 缩写 + Tab | .vue（模板段与 script 段）/ **.tsx / .jsx**（TSX_HTML/JSX_HTML context） |
 | **在线文档跳转**——文档弹窗与候选弹窗均可跳转组件官网 | 点击链接 / 选末项 | beaver-ui.yearrow.com |
 
 ## 代码模板（Live Templates）
@@ -43,6 +43,18 @@ Beaver UI 组件库的 JetBrains IDE（IDEA / WebStorm）开发辅助插件。
 | `bTableAsyncTsx` / `bTableEditTsx` / `bListAsyncTsx` | 表格/列表套件 **.tsx 形态**（onQueryChange 事件、编辑插槽） |
 | `bDivider` / `bCollapse` / `bTransfer` / `bNavigation` / `bLabelExtend` / `bDatePickerPanel` / `bCalendar` | 折叠分割线 / 折叠面板 / 穿梭框 / 页面导航 / 溢出提示 / 日期面板 / 日历 |
 
+## 模板生效范围（context）
+
+context ID 以 IDE 2024.2 发行版内置 liveTemplates 实测校准（此前误用 TSX/JSX——平台从未注册该 ID，模板在 .tsx 中不生效）：
+
+| 模板类别 | 生效 context |
+| --- | --- |
+| 模板形态（bButton / bGrid / bPanel 等 33 条） | `HTML`、`XML`、`VUE_TEMPLATE`（.vue 模板段）、`TSX_HTML` / `JSX_HTML`（tsx/jsx 的 JSX 标记区，渲染函数内可用） |
+| TSX 形态（bGridTsx / bFlexBoxTsx 等 10 条） | `TSX_HTML`、`JSX_HTML`、`VUE_SCRIPT`（.vue `<script lang="tsx">` 段） |
+| 脚本语句（bMessage） | `VUE_SCRIPT`、`TS_STATEMENT` / `JS_STATEMENT` 及 TOP_LEVEL 变体 |
+
+> bMessage 模板为脚本语句形态（在 script 段/事件处理函数内展开 `BMessage.success('…')`），不再插入整段 `<script setup>` 标签。
+
 ## 安装
 
 1. 下载 [Releases](https://github.com/yangzhouQS/BeaverUIPlugin/releases) 中的 `BeaverUIPlugin-x.y.z.zip`
@@ -52,7 +64,7 @@ Beaver UI 组件库的 JetBrains IDE（IDEA / WebStorm）开发辅助插件。
 
 ## 版本
 
-- **1.1.0**：数据全量对齐 beaver-ui 1.0.1——**106 个 b-* 标签 / 1837 条属性 / 194 个插槽 / 34 条指令**（旧版仅 44 组件且只收录带枚举值的属性）。
+- **1.1.0**：Live Templates context 修复（TSX/JSX 无效 ID → TSX_HTML/JSX_HTML/TS_STATEMENT 实测校准，.tsx 中可正常展开；标记模板补 TSX_HTML/JSX_HTML；bMessage 改脚本语句形态）。数据全量对齐 beaver-ui 1.0.1——**106 个 b-* 标签 / 1837 条属性 / 194 个插槽 / 34 条指令**（旧版仅 44 组件且只收录带枚举值的属性）。
   - **属性名补全全覆盖**：所有属性（含无枚举值的）均参与模板属性名补全；TSX 属性名/属性值补全同步扩容
   - **插槽补全（新增）**：模板内 `<b-panel #` + Ctrl+Space 弹出插槽伪属性；TSX 在标签的 `{{ }}` 插槽对象内弹出 `slotName: () => ` 候选
   - **全局指令补全（新增）**：任意标签可提示 `v-loading` / `v-auto-tip` / `v-highlight-query` / `v-infinite-scroll` 及配套属性

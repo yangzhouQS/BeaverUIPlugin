@@ -290,17 +290,31 @@ ${fields.join('\n\n')}
 
 // ============ 生成 3) beaver.xml live templates ============
 function genTemplates() {
-  // context 六注册：平台 HTML/XML + Vue 插件 VUE_TEMPLATE/VUE_SCRIPT/TSX/JSX
-  // （Vue JSX 的 tsx context id 是 TSX（Vue 插件注册），.vue 模板段是 VUE_TEMPLATE）
-  const ctxOptions = () =>
-    '<option name="HTML" value="true"/><option name="XML" value="true"/>'
-    + '<option name="VUE_TEMPLATE" value="true"/><option name="VUE_SCRIPT" value="true"/>'
-    + '<option name="TSX" value="true"/><option name="JSX" value="true"/>'
+  // context ID 以 IDE 2024.2 发行版内置 liveTemplates 实测为准（此前误用 TSX/JSX——
+  // 平台从未注册过这两个 ID，IDE 静默忽略，模板在 .tsx 中永远不生效）：
+  //   标记区：HTML / XML / TSX_HTML（.tsx JSX 区）/ JSX_HTML（.jsx JSX 区）/ VUE_TEMPLATE（.vue 模板段）
+  //   脚本区：VUE_SCRIPT（.vue script 段）/ TS_STATEMENT / JS_STATEMENT / *_TOP_LEVEL_STATEMENT
+  const CTX_MARKUP = [
+    'HTML', 'XML',
+    'VUE_TEMPLATE',
+    'TSX_HTML', 'JSX_HTML',
+  ]
+  const CTX_TSX = [
+    'TSX_HTML', 'JSX_HTML',
+    'VUE_SCRIPT', // .vue <script lang="tsx"> 段
+  ]
+  const CTX_SCRIPT = [
+    'VUE_SCRIPT',
+    'TS_STATEMENT', 'TS_TOP_LEVEL_STATEMENT',
+    'JS_STATEMENT', 'JS_TOP_LEVEL_STATEMENT',
+  ]
 
-  const T = (name, value) => `  <template name="b${name}" value="${escHtml(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
+  const ctxOptions = (ids) => ids.map((id) => `<option name="${id}" value="true"/>`).join('')
+
+  const T = (name, value, contexts = CTX_MARKUP) => `  <template name="b${name}" value="${escHtml(value)}" description="beaver-ui ${name}" toReformat="false" toShortenFQNames="true">
     <variable name="X" expression="" defaultValue="" alwaysStopAt="true"/>
     <context>
-      ${ctxOptions()}
+      ${ctxOptions(contexts)}
     </context>
   </template>`
 
@@ -344,25 +358,25 @@ function genTemplates() {
     ['Collapse', `<b-collapse v-model="active">\n  <b-collapse-item title="$X$" name="1">内容</b-collapse-item>\n</b-collapse>`],
     ['Transfer', `<b-transfer v-model="value" :data="transferData" :titles="['源', '目标']" filterable />`],
     ['DateRange', `<b-date-range-picker\n  v-model="range"\n  type="daterange"\n  :shortcuts="['month', 'quarter', 'year']"\n  default-shortcut="month"\n/>`],
-    ['Message', `<script setup>\nimport { BMessage } from '@cs/beaver-ui'\nconst onClick = () => BMessage.success('$')\n</script>`],
+    ['Message', `BMessage.success('$X$')`, CTX_SCRIPT],
     // ---- TSX 形态（{{ slot: () => ... }} 双花括号插槽）----
-    ['GridTsx', `<b-grid\n  data={rows}\n  columns={columns}\n  height="360"\n  border\n>\n  {{\n    empty: () => <span>暂无记录</span>,\n  }}\n</b-grid>`],
-    ['TableAsyncTsx', `<b-table-async\n  ref={tableRef}\n  table-data={tableData}\n  column-configs={columns}\n  input={{ take: 20, draw: 1 }}\n  onQueryChange={handleQueryChange}\n/>`],
-    ['TableEditTsx', `<b-table-edit\n  ref={tableRef}\n  column-configs={columns}\n  table-data={rows}\n  height="320"\n>\n  {{\n    edit_name: ({ row }: any) => <b-input v-model={row.name} size="small" />,\n  }}\n</b-table-edit>`],
-    ['ListAsyncTsx', `<b-list-async\n  list-data={listData}\n  item-key="id"\n  height="320"\n>\n  {{\n    item: ({ row }: any) => (\n      <b-box>{row.materialName}</b-box>\n    ),\n  }}\n</b-list-async>`],
-    ['SearchSelectTsx', `<b-search-select\n  v-model={value}\n  load={({ skip, take, keyword }, resolve) =>\n    searchApi({ keyword, skip, take }).then((r) => resolve(r.result))\n  }\n/>`],
-    ['SearchTreeSelectTsx', `<b-search-tree-select\n  v-model={value}\n  data={roots}\n  page-size={20}\n  searchable\n  props={{ label: 'name', value: 'id' }}\n  style="width: 320px"\n  onLoad={(node, resolve) => loadChildren(node, resolve)}\n/>`],
-    ['FlexBoxTsx', `<b-flex-box\n  item-num={2}\n  item-config={[\n    { tag: 'item-1', isFixed: false, paddingSize: 'default' },\n    { tag: 'item-2', isFixed: true, size: '200px', paddingSize: 'default' },\n  ]}\n  height="280px"\n>\n  {{\n    "item-1": () => (<div class="pane pane-fluid">流体区（flex: 1）</div>),\n    "item-2": () => (<div class="pane pane-fixed">固定区 200px</div>),\n  }}\n</b-flex-box>`],
-    ['FlexLineTsx', `<b-flex-line :gap={10}>\n  {{\n    default: () => (<div class="demo-area">左区（默认 50%）</div>),\n    right: () => (<div class="demo-area">右区（占满剩余，右对齐）</div>),\n  }}\n</b-flex-line>`],
-    ['FilterItemTsx', `<b-filter-item label="项目名称" label-width={90}>\n  {{\n    default: ({ id }: any) => (<b-input id={id} placeholder="请输入项目名称" clearable />),\n  }}\n</b-filter-item>`],
-    ['BoxTsx', `<b-box padding-size="default" border>\n  {{\n    default: () => (<div>$X$</div>),\n  }}\n</b-box>`],
+    ['GridTsx', `<b-grid\n  data={rows}\n  columns={columns}\n  height="360"\n  border\n>\n  {{\n    empty: () => <span>暂无记录</span>,\n  }}\n</b-grid>`, CTX_TSX],
+    ['TableAsyncTsx', `<b-table-async\n  ref={tableRef}\n  table-data={tableData}\n  column-configs={columns}\n  input={{ take: 20, draw: 1 }}\n  onQueryChange={handleQueryChange}\n/>`, CTX_TSX],
+    ['TableEditTsx', `<b-table-edit\n  ref={tableRef}\n  column-configs={columns}\n  table-data={rows}\n  height="320"\n>\n  {{\n    edit_name: ({ row }: any) => <b-input v-model={row.name} size="small" />,\n  }}\n</b-table-edit>`, CTX_TSX],
+    ['ListAsyncTsx', `<b-list-async\n  list-data={listData}\n  item-key="id"\n  height="320"\n>\n  {{\n    item: ({ row }: any) => (\n      <b-box>{row.materialName}</b-box>\n    ),\n  }}\n</b-list-async>`, CTX_TSX],
+    ['SearchSelectTsx', `<b-search-select\n  v-model={value}\n  load={({ skip, take, keyword }, resolve) =>\n    searchApi({ keyword, skip, take }).then((r) => resolve(r.result))\n  }\n/>`, CTX_TSX],
+    ['SearchTreeSelectTsx', `<b-search-tree-select\n  v-model={value}\n  data={roots}\n  page-size={20}\n  searchable\n  props={{ label: 'name', value: 'id' }}\n  style="width: 320px"\n  onLoad={(node, resolve) => loadChildren(node, resolve)}\n/>`, CTX_TSX],
+    ['FlexBoxTsx', `<b-flex-box\n  item-num={2}\n  item-config={[\n    { tag: 'item-1', isFixed: false, paddingSize: 'default' },\n    { tag: 'item-2', isFixed: true, size: '200px', paddingSize: 'default' },\n  ]}\n  height="280px"\n>\n  {{\n    "item-1": () => (<div class="pane pane-fluid">流体区（flex: 1）</div>),\n    "item-2": () => (<div class="pane pane-fixed">固定区 200px</div>),\n  }}\n</b-flex-box>`, CTX_TSX],
+    ['FlexLineTsx', `<b-flex-line :gap={10}>\n  {{\n    default: () => (<div class="demo-area">左区（默认 50%）</div>),\n    right: () => (<div class="demo-area">右区（占满剩余，右对齐）</div>),\n  }}\n</b-flex-line>`, CTX_TSX],
+    ['FilterItemTsx', `<b-filter-item label="项目名称" label-width={90}>\n  {{\n    default: ({ id }: any) => (<b-input id={id} placeholder="请输入项目名称" clearable />),\n  }}\n</b-filter-item>`, CTX_TSX],
+    ['BoxTsx', `<b-box padding-size="default" border>\n  {{\n    default: () => (<div>$X$</div>),\n  }}\n</b-box>`, CTX_TSX],
   ]
   return `<?xml version="1.0" encoding="UTF-8"?>
 <templateSet group="BeaverUI">
 <!-- 自动生成：scripts/gen-plugin-data.mjs；数据快照 ${SNAPSHOT}
      组名从 beaver-ui 改为 BeaverUI：规避 IDE 模板缓存（删除组后记入
      deletedKeys，重装同名组不再加载，改组名即重新注册） -->
-${items.map(([n, v]) => T(n, v)).join('\n')}
+${items.map(([n, v, c]) => T(n, v, c)).join('\n')}
 </templateSet>
 `
 }
